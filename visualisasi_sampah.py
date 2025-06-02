@@ -75,14 +75,17 @@ with tab3:
 
     # Grafik gabungan
     fig3, ax3 = plt.subplots(figsize=(10, 5))
-    ax3.plot(data_sosial_ekonomi['Tahun'], data_sosial_ekonomi['Jumlah Penduduk'], label='Jumlah Penduduk', marker='o')
+    ax3.plot(data_sosial_ekonomi['Tahun'], data_sosial_ekonomi['Jumlah Penduduk'],
+             label='Jumlah Penduduk', marker='o', color='blue')
     ax3.set_ylabel("Jumlah Penduduk", color='blue')
-    ax3.tick_params(axis='y', labelcolor='blue')
     ax3.set_xlabel("Tahun")
+    ax3.tick_params(axis='y', labelcolor='blue')
     ax3.set_title("Tren Jumlah Penduduk dan PDRB Per Kapita")
 
+    # Twin axis untuk PDRB per kapita
     ax4 = ax3.twinx()
-    ax4.plot(data_sosial_ekonomi['tahun'], data_sosial_ekonomi['PDRB Per Kapita (Rp)'], label='PDRB Per Kapita (Rp)', color='red', marker='s')
+    ax4.plot(data_sosial_ekonomi['Tahun'], data_sosial_ekonomi['PDRB Per Kapita (Rp)'],
+             label='PDRB Per Kapita (Rp)', color='red', marker='s')
     ax4.set_ylabel("PDRB Per Kapita (Rp)", color='red')
     ax4.tick_params(axis='y', labelcolor='red')
 

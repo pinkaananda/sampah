@@ -1,41 +1,41 @@
+import streamlit as st
 import pandas as pd
 
-# ========== 1. Load Data ==========
-# Pastikan file berada dalam direktori yang sama dengan file .py ini
-file_sampah = 'data_sampah.xlsx'
-file_cuaca = 'data_cuaca.xlsx'
-file_ekonomi = 'data_ekonomi.xlsx'
+# ===== Judul Aplikasi =====
+st.set_page_config(page_title="Visualisasi Data Sampah & Eksternal", layout="wide")
+st.title("📊 Data Mentah: Sampah, Cuaca, dan Sosial Ekonomi")
 
-# Baca data sampah
-try:
-    data_sampah = pd.read_excel(file_sampah)
-    data_sampah['TANGGAL'] = pd.to_datetime(data_sampah['TANGGAL'])
-    print("===== DATA SAMPAH =====")
-    print(data_sampah.info())
-    print(data_sampah.head())
-    print("\n")
-except Exception as e:
-    print("Gagal membaca data sampah:", e)
+# ===== Load Data =====
+@st.cache_data
+def load_data():
+    df_sampah = pd.read_excel("data_sampah.xlsx")
+    df_cuaca = pd.read_excel("data_cuaca.xlsx")
+    df_ekosos = pd.read_excel("data_sosial_ekonomi.xlsx")
+    return df_sampah, df_cuaca, df_ekosos
 
-# Baca data cuaca
-try:
-    data_cuaca = pd.read_excel(file_cuaca)
-    if 'tanggal' in data_cuaca.columns:
-        data_cuaca['tanggal'] = pd.to_datetime(data_cuaca['tanggal'])
-    print("===== DATA CUACA =====")
-    print(data_cuaca.info())
-    print(data_cuaca.head())
-    print("\n")
-except Exception as e:
-    print("Gagal membaca data cuaca:", e)
+df_sampah, df_cuaca, df_ekosos = load_data()
 
-# Baca data sosial ekonomi
-try:
-    data_ekonomi = pd.read_excel(file_ekonomi)
-    data_ekonomi.columns = data_ekonomi.columns.str.lower()  # normalisasi nama kolom
-    print("===== DATA SOSIAL EKONOMI =====")
-    print(data_ekonomi.info())
-    print(data_ekonomi.head())
-    print("\n")
-except Exception as e:
-    print("Gagal membaca data sosial ekonomi:", e)
+# ======= Data SAMPAH =======
+st.header("🗑 Data Sampah")
+df_sampah['TANGGAL'] = pd.to_datetime(df_sampah['TANGGAL'])
+st.write("Data sampah dari tahun", df_sampah['TANGGAL'].dt.year.min(), "hingga", df_sampah['TANGGAL'].dt.year.max())
+st.dataframe(df_sampah, use_container_width=True)
+
+# ======= Data CUACA =======
+st.header("🌦 Data Cuaca")
+if 'tanggal' in df_cuaca.columns:
+    df_cuaca['Tanggal'] = pd.to_datetime(df_cuaca['Tanggal'])
+    st.write("Data cuaca dari tahun", df_cuaca['tanggal'].dt.year.min(), "hingga", df_cuaca['tanggal'].dt.year.max())
+else:
+    st.warning("Kolom 'tanggal' tidak ditemukan di data cuaca.")
+st.dataframe(df_cuaca, use_container_width=True)
+
+# ======= Data EKONOMI & SOSIAL =======
+st.header("👨‍👩‍👧‍👦📈 Data Sosial Ekonomi")
+df_ekosos.columns = df_ekosos.columns.str.lower()
+st.write("Data dari tahun", df_ekosos['Tahun'].min(), "hingga", df_ekosos['Tahun'].max())
+st.dataframe(df_ekosos, use_container_width=True)
+
+# ========== Footer ==========
+st.markdown("---")
+st.caption("Data ditampilkan apa adanya sebelum dilakukan preprocessing.")

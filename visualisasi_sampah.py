@@ -27,7 +27,7 @@ if 'tanggal' in df_cuaca.columns:
     df_cuaca['Tanggal'] = pd.to_datetime(df_cuaca['Tanggal'])
     st.write("Data cuaca dari tahun", df_cuaca['Tanggal'].dt.year.min(), "hingga", df_cuaca['Tanggal'].dt.year.max())
 else:
-    st.warning("Kolom 'tanggal' tidak ditemukan di data cuaca.")
+    st.warning("Kolom 'Tanggal' tidak ditemukan di data cuaca.")
 st.dataframe(df_cuaca, use_container_width=True)
 
 # ======= Data EKONOMI & SOSIAL =======

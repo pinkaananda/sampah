@@ -85,7 +85,7 @@ with tab3:
     # Twin axis untuk PDRB per kapita
     ax4 = ax3.twinx()
     ax4.plot(data_sosial_ekonomi['Tahun'], data_sosial_ekonomi['PDRB Per Kapita (Rp)'],
-             label='PDRB Per Kapita (Rp)' color='red', marker='s')
+             label='PDRB Per Kapita (Rp)', color='red', marker='s')
     ax4.set_ylabel("PDRB Per Kapita (Rp)", color='red')
     ax4.tick_params(axis='y', labelcolor='red')
 

@@ -100,22 +100,52 @@ with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) untuk 2025–2030")
     st.dataframe(data_prediksi, use_container_width=True)
 
+    # --- 1. Visualisasi Prediksi Sampah Seluruh Periode ---
+    st.markdown("---")
+    st.subheader("Visualisasi Prediksi Sampah Seluruh Periode (2025–2030)")
+    fig_all, ax_all = plt.subplots(figsize=(14, 5))
+    ax_all.plot(data_prediksi['Tanggal'], data_prediksi['Jumlah Sampah (Ton)'], color='teal')
+    ax_all.set_title("Prediksi Jumlah Sampah Harian 2025–2030")
+    ax_all.set_xlabel("Tanggal")
+    ax_all.set_ylabel("Jumlah Sampah (Ton)")
+    ax_all.grid(True)
+    st.pyplot(fig_all)
+
+    # --- 2. Statistik Rata-Rata Bulanan ---
+    st.markdown("---")
+    st.subheader("📊 Tabel Rata-Rata Prediksi per Bulan")
+    rata_bulanan = data_prediksi.groupby(['Tahun', 'Bulan'])['Jumlah Sampah (Ton)'].mean().reset_index()
+    bulan_nama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 
+                  'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+    bulan_dict = dict(zip(range(1, 13), bulan_nama))
+    rata_bulanan['Bulan'] = rata_bulanan['Bulan'].map(bulan_dict)
+    rata_bulanan['Bulan'] = pd.Categorical(
+        rata_bulanan['Bulan'],
+        categories=bulan_nama,
+        ordered=True
+    )
+    rata_bulanan_pivot = rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Jumlah Sampah (Ton)')
+    st.dataframe(rata_bulanan_pivot, use_container_width=True)
+
+    # --- 3. Visualisasi Prediksi Bulanan (Berdasarkan Filter) ---
+    st.markdown("---")
+    st.subheader("Visualisasi Prediksi Harian per Bulan")
+
     # Filter tahun dan bulan
     tahun_opsi_pred = sorted(data_prediksi['Tahun'].unique())
     tahun_pilih_pred = st.selectbox("Pilih Tahun", tahun_opsi_pred, key="tahun_prediksi")
 
     bulan_opsi_pred = list(range(1, 13))
-    bulan_nama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
     bulan_dict = dict(zip(bulan_opsi_pred, bulan_nama))
     bulan_pilih_pred = st.selectbox("Pilih Bulan", bulan_opsi_pred, format_func=lambda x: bulan_dict[x], key="bulan_prediksi")
 
-    # Filter data sesuai pilihan
+    # Filter data
     data_filtered = data_prediksi[
         (data_prediksi['Tahun'] == tahun_pilih_pred) & 
         (data_prediksi['Bulan'] == bulan_pilih_pred)
     ]
 
-    # Plot data harian
+    # Plot
     fig4, ax4 = plt.subplots(figsize=(12, 4))
     ax4.plot(data_filtered['Tanggal'], data_filtered['Jumlah Sampah (Ton)'],
              marker='o', linestyle='-', color='purple')
@@ -125,57 +155,5 @@ with tab4:
     ax4.grid(True)
     st.pyplot(fig4)
 
-    # Rata-rata bulanan dan tahunan
-    st.markdown("### 📊 Statistik Rata-Rata")
-
-    rata_bulanan = data_prediksi.groupby(['Tahun', 'Bulan'])['Jumlah Sampah (Ton)'].mean().reset_index()
-    rata_tahunan = data_prediksi.groupby('Tahun')['Jumlah Sampah (Ton)'].mean().reset_index()
-
-    st.write("📅 Rata-Rata per Bulan")
-    bulan_nama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 
-              'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
-    bulan_dict = dict(zip(range(1, 13), bulan_nama))
-    
-    rata_bulanan['Bulan'] = rata_bulanan['Bulan'].map(bulan_dict)
-    rata_bulanan['Bulan'] = pd.Categorical(
-        rata_bulanan['Bulan'],
-        categories=bulan_nama,
-        ordered=True
-    )
-    # Tampilkan data pivot dengan bulan berurutan
-    rata_bulanan_pivot = rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Jumlah Sampah (Ton)')
-    st.dataframe(rata_bulanan_pivot, use_container_width=True)
-
-    st.write("📅 Rata-Rata per Tahun")
-    st.dataframe(rata_tahunan, use_container_width=True)
-    
-    st.markdown("---")
-    st.subheader("Visualisasi Prediksi Sampah Seluruh Periode (2025-2030)")
-    fig_all, ax_all = plt.subplots(figsize=(14, 5))
-    ax_all.plot(data_prediksi['Tanggal'], data_prediksi['Jumlah Sampah (Ton)'], color='teal')
-    ax_all.set_title("Prediksi Jumlah Sampah Harian 2025-2030")
-    ax_all.set_xlabel("Tanggal")
-    ax_all.set_ylabel("Jumlah Sampah (Ton)")
-    ax_all.grid(True)
-    st.pyplot(fig_all)
-    
-    # Visualisasi rata-rata prediksi per tahun dengan filter
-    st.markdown("---")
-    st.subheader("Visualisasi Rata-Rata Prediksi per Tahun")
-    
-    # Pilih tahun untuk visualisasi rata-rata
-    tahun_opsi_rata = sorted(data_prediksi['Tahun'].unique())
-    tahun_pilih_rata = st.selectbox("Pilih Tahun untuk Visualisasi Rata-Rata Harian", tahun_opsi_rata, key="tahun_rata_prediksi")
-    
-    data_rata_tahun = data_prediksi[data_prediksi['Tahun'] == tahun_pilih_rata]
-    rata_harian = data_rata_tahun.groupby('Tanggal')['Jumlah Sampah (Ton)'].mean()
-    
-    fig_year, ax_year = plt.subplots(figsize=(12, 4))
-    ax_year.plot(rata_harian.index, rata_harian.values, marker='o', color='navy')
-    ax_year.set_title(f"Rata-Rata Prediksi Jumlah Sampah Harian Tahun {tahun_pilih_rata}")
-    ax_year.set_xlabel("Tanggal")
-    ax_year.set_ylabel("Jumlah Sampah (Ton)")
-    ax_year.grid(True)
-    st.pyplot(fig_year)
-    
-        
+    # --- 4. Statistik Rata-Rata Tahunan ---
+    st.markdown(

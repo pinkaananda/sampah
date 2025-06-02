@@ -72,6 +72,7 @@ with tab2:
 with tab3:
     st.subheader("Data Sosial Ekonomi Tahunan")
     st.dataframe(data_sosial_ekonomi, use_container_width=True)
+    st.write("Kolom dalam data sosial ekonomi:", data_sosial_ekonomi.columns.tolist())
 
     # Grafik gabungan
     fig3, ax3 = plt.subplots(figsize=(10, 5))

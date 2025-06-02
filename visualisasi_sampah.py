@@ -10,7 +10,7 @@ st.title("Visualisasi Data Mentah Sampah, Cuaca, dan Sosial Ekonomi")
 # Fungsi untuk load dan tampilkan data
 @st.cache_data
 def load_data():
-    data_sampah = pd.read_excel('data_sampah.xlsx')
+    data_sampah = pd.read_excel('data_sampah.xlsx', header=1)
     data_cuaca = pd.read_excel('data_cuaca.xlsx')
     data_ekonomi = pd.read_excel('data_sosial_ekonomi.xlsx')
     return data_sampah, data_cuaca, data_ekonomi
@@ -20,17 +20,17 @@ data_sampah, data_cuaca, data_ekonomi = load_data()
 # Tampilkan data sampah
 st.header("Data Sampah")
 st.write("Tampilan 10 baris pertama data sampah")
-st.dataframe(data_sampah.head(10))
+st.dataframe(data_sampah)
 
 # Tampilkan data cuaca
 st.header("Data Cuaca")
 st.write("Tampilan 10 baris pertama data cuaca")
-st.dataframe(data_cuaca.head(10))
+st.dataframe(data_cuaca)
 
 # Tampilkan data sosial ekonomi
 st.header("Data Sosial Ekonomi")
 st.write("Tampilan 10 baris pertama data sosial ekonomi")
-st.dataframe(data_ekonomi.head(10))
+st.dataframe(data_ekonomi)
 
 # Filter tahun pada data sampah jika ada kolom TANGGAL
 if 'TANGGAL' in data_sampah.columns:

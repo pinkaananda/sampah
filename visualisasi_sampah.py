@@ -3,10 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Konfigurasi awal Streamlit (HARUS di awal)
-st.set_page_config(page_title="Visualisasi Data Sampah & Eksternal", layout="wide")
+st.set_page_config(page_title="Visualisasi Data Sampah & Eksterna", layout="wide")
 
 # Judul Halaman
-st.title("📊 Visualisasi Data Sampah, Cuaca, dan Sosial Ekonomi")
+st.title("PREDIKSI JUMLAH SAMPAH TPA BUMI AYU")
 
 # Load data
 data_sampah = pd.read_excel("data_sampah.xlsx", header=1)

@@ -142,7 +142,9 @@ with tab4:
         categories=bulan_nama,
         ordered=True
     )
-    st.dataframe(rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Jumlah Sampah (Ton)'), use_container_width=True)
+    # Tampilkan data pivot dengan bulan berurutan
+    rata_bulanan_pivot = rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Jumlah Sampah (Ton)')
+    st.dataframe(rata_bulanan_pivot, use_container_width=True)
 
     st.write("📅 Rata-Rata per Tahun")
     st.dataframe(rata_tahunan, use_container_width=True)

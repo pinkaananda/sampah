@@ -28,7 +28,7 @@ if 'tahun' not in data_cuaca.columns:
     data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
 # Tabs untuk memisahkan data
-tab1, tab2, tab3 = st.tabs(["📦 Data Sampah", "🌦️ Data Cuaca", "📈 Data Sosial Ekonomi"])
+tab1, tab2, tab3, tab4 = st.tabs(["📦 Data Sampah", "🌦️ Data Cuaca", "📈 Data Sosial Ekonomi", "🔮 Hasil Prediksi"])
 
 # Tab 1: Data Sampah
 with tab1:
@@ -96,8 +96,6 @@ with tab3:
     st.pyplot(fig3)
     
 # Tab 4: Hasil Prediksi
-tab4 = st.tabs(["🔮 Hasil Prediksi"])[0]
-
 with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) untuk 2025–2030")
     st.dataframe(data_prediksi, use_container_width=True)

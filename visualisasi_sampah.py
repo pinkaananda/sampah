@@ -132,7 +132,16 @@ with tab4:
     rata_tahunan = data_prediksi.groupby('Tahun')['Jumlah Sampah (Ton)'].mean().reset_index()
 
     st.write("📅 Rata-Rata per Bulan")
+    bulan_nama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 
+              'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+    bulan_dict = dict(zip(range(1, 13), bulan_nama))
+    
     rata_bulanan['Bulan'] = rata_bulanan['Bulan'].map(bulan_dict)
+    rata_bulanan['Bulan'] = pd.Categorical(
+        rata_bulanan['Bulan'],
+        categories=bulan_nama,
+        ordered=True
+    )
     st.dataframe(rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Jumlah Sampah (Ton)'), use_container_width=True)
 
     st.write("📅 Rata-Rata per Tahun")

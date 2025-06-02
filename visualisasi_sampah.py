@@ -12,7 +12,7 @@ st.title("📊 Visualisasi Data Sampah, Cuaca, dan Sosial Ekonomi")
 data_sampah = pd.read_excel("data_sampah.xlsx", header=1)
 data_cuaca = pd.read_excel("data_cuaca.xlsx")
 data_sosial_ekonomi = pd.read_excel("data_sosial_ekonomi.xlsx")
-data_prediksi = pd.read_excel("prediksi_sampah_2025_2030.xlsx")
+data_prediksi = pd.read_csv("prediksi_sampah_2025_2030.csv")
 
 # Pastikan kolom tanggal benar
 data_sampah['TANGGAL'] = pd.to_datetime(data_sampah['TANGGAL'])

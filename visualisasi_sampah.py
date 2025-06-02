@@ -8,7 +8,7 @@ st.title("📊 Data Mentah: Sampah, Cuaca, dan Sosial Ekonomi")
 # ===== Load Data =====
 @st.cache_data
 def load_data():
-    df_sampah = pd.read_excel("data_sampah.xlsx")
+    df_sampah = pd.read_excel("data_sampah.xlsx",  header=1)
     df_cuaca = pd.read_excel("data_cuaca.xlsx")
     df_ekosos = pd.read_excel("data_sosial_ekonomi.xlsx")
     return df_sampah, df_cuaca, df_ekosos

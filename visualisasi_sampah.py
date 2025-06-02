@@ -12,7 +12,7 @@ st.title("Visualisasi Data Mentah Sampah, Cuaca, dan Sosial Ekonomi")
 def load_data():
     data_sampah = pd.read_excel('data_sampah.xlsx')
     data_cuaca = pd.read_excel('data_cuaca.xlsx')
-    data_ekonomi = pd.read_excel('data_ekonomi.xlsx')
+    data_ekonomi = pd.read_excel('data_sosial_ekonomi.xlsx')
     return data_sampah, data_cuaca, data_ekonomi
 
 data_sampah, data_cuaca, data_ekonomi = load_data()

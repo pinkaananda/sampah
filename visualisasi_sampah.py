@@ -13,7 +13,7 @@ DATA_PATH = 'data_sampah.xlsx'
 
 st.title("Visualisasi Data Mentah Sampah")
 
-data = pd.read_excel(data_sampah.xslx, header=1)
+data = pd.read_excel(data_sampah.xslx)
 data['TANGGAL'] = pd.to_datetime(data['TANGGAL'])
 
 # Sidebar filter tanggal

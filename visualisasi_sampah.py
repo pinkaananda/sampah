@@ -90,3 +90,63 @@ with tab3:
     ax4.tick_params(axis='y', labelcolor='red')
 
     st.pyplot(fig3)
+# Tambah tab baru
+tab4 = st.tabs(["📉 Hasil Prediksi"])[0]
+
+with tab4:
+    st.subheader("Hasil Prediksi Jumlah Sampah (Ton)")
+
+    # Load data prediksi
+    data_prediksi = pd.read_excel("hasil_prediksi.xlsx")
+    data_prediksi['tanggal'] = pd.to_datetime(data_prediksi['Tanggal'])
+    data_prediksi['tahun'] = data_prediksi['tanggal'].dt.year
+    data_prediksi['bulan'] = data_prediksi['tanggal'].dt.month
+    nama_bulan = {
+        1: 'Januari', 2: 'Februari', 3: 'Maret', 4: 'April',
+        5: 'Mei', 6: 'Juni', 7: 'Juli', 8: 'Agustus',
+        9: 'September', 10: 'Oktober', 11: 'November', 12: 'Desember'
+    }
+    data_prediksi['nama_bulan'] = data_prediksi['bulan'].map(nama_bulan)
+
+    # Filter interaktif
+    tahun_opsi_pred = sorted(data_prediksi['tahun'].unique())
+    tahun_pilih_pred = st.selectbox("Pilih Tahun", tahun_opsi_pred, key="tahun_prediksi")
+
+    bulan_opsi_pred = sorted(data_prediksi[data_prediksi['tahun'] == tahun_pilih_pred]['bulan'].unique())
+    bulan_nama_opsi = [nama_bulan[b] for b in bulan_opsi_pred]
+    bulan_nama_pilih = st.selectbox("Pilih Bulan", bulan_nama_opsi, key="bulan_prediksi")
+    bulan_pilih_pred = {v: k for k, v in nama_bulan.items()}[bulan_nama_pilih]
+
+    # Filter data sesuai pilihan
+    data_pred_filter = data_prediksi[
+        (data_prediksi['tahun'] == tahun_pilih_pred) &
+        (data_prediksi['bulan'] == bulan_pilih_pred)
+    ]
+
+    st.write(f"Data Prediksi untuk **{bulan_nama_pilih} {tahun_pilih_pred}**")
+    st.dataframe(data_pred_filter, use_container_width=True)
+
+    # Grafik prediksi harian
+    fig4, ax4 = plt.subplots(figsize=(12, 4))
+    ax4.plot(data_pred_filter['tanggal'], data_pred_filter['Jumlah Sampah (Ton)'], color='purple')
+    ax4.set_title(f"Prediksi Harian Sampah - {bulan_nama_pilih} {tahun_pilih_pred}")
+    ax4.set_xlabel("Tanggal")
+    ax4.set_ylabel("Jumlah Sampah (Ton)")
+    ax4.grid(True)
+    st.pyplot(fig4)
+
+    # Rata-rata tahunan
+    st.markdown("### 📊 Statistik Rata-rata")
+
+    rata_tahunan = data_prediksi.groupby('tahun')['Jumlah Sampah (Ton)'].mean().reset_index()
+    rata_bulanan = data_prediksi.groupby(['tahun', 'nama_bulan'])['Jumlah Sampah (Ton)'].mean().reset_index()
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### Rata-rata Tahunan")
+        st.dataframe(rata_tahunan.rename(columns={'Jumlah Sampah (Ton)': 'Rata-rata (Ton)'}), use_container_width=True)
+
+    with col2:
+        st.markdown("#### Rata-rata Bulanan")
+        rata_bulanan_pivot = rata_bulanan.pivot(index='nama_bulan', columns='tahun', values='Jumlah Sampah (Ton)')
+        st.dataframe(rata_bulanan_pivot.round(2), use_container_width=True)

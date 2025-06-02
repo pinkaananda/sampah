@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Judul aplikasi
+st.set_page_config(page_title="Visualisasi Data Sampah", layout="wide")
 st.title("Visualisasi Data Mentah Sampah, Cuaca, dan Sosial Ekonomi")
 
 # Fungsi untuk load dan tampilkan data

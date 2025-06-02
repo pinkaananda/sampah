@@ -23,7 +23,7 @@ st.dataframe(df_sampah, use_container_width=True)
 
 # ======= Data CUACA =======
 st.header("🌦 Data Cuaca")
-if 'tanggal' in df_cuaca.columns:
+if 'Tanggal' in df_cuaca.columns:
     df_cuaca['Tanggal'] = pd.to_datetime(df_cuaca['Tanggal'])
     st.write("Data cuaca dari tahun", df_cuaca['Tanggal'].dt.year.min(), "hingga", df_cuaca['Tanggal'].dt.year.max())
 else:
@@ -32,7 +32,7 @@ st.dataframe(df_cuaca, use_container_width=True)
 
 # ======= Data EKONOMI & SOSIAL =======
 st.header("👨‍👩‍👧‍👦📈 Data Sosial Ekonomi")
-df_ekosos.columns = df_ekosos.columns.str.lower()
+df_ekosos['Tahun'] = pd.to_datetime(df_ekosos['Tahun'])
 st.write("Data dari tahun", df_ekosos['Tahun'].min(), "hingga", df_ekosos['Tahun'].max())
 st.dataframe(df_ekosos, use_container_width=True)
 

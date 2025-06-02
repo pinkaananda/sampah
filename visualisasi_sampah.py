@@ -137,3 +137,34 @@ with tab4:
 
     st.write("📅 Rata-Rata per Tahun")
     st.dataframe(rata_tahunan, use_container_width=True)
+
+
+
+st.markdown("---")
+st.subheader("Visualisasi Prediksi Sampah Seluruh Periode (2025-2030)")
+fig_all, ax_all = plt.subplots(figsize=(14, 5))
+ax_all.plot(data_prediksi['Tanggal'], data_prediksi['Jumlah Sampah (Ton)'], color='teal')
+ax_all.set_title("Prediksi Jumlah Sampah Harian 2025-2030")
+ax_all.set_xlabel("Tanggal")
+ax_all.set_ylabel("Jumlah Sampah (Ton)")
+ax_all.grid(True)
+st.pyplot(fig_all)
+
+# Visualisasi rata-rata prediksi per tahun dengan filter
+st.markdown("---")
+st.subheader("Visualisasi Rata-Rata Prediksi per Tahun")
+
+# Pilih tahun untuk visualisasi rata-rata
+tahun_opsi_rata = sorted(data_prediksi['Tahun'].unique())
+tahun_pilih_rata = st.selectbox("Pilih Tahun untuk Visualisasi Rata-Rata Harian", tahun_opsi_rata, key="tahun_rata_prediksi")
+
+data_rata_tahun = data_prediksi[data_prediksi['Tahun'] == tahun_pilih_rata]
+rata_harian = data_rata_tahun.groupby('Tanggal')['Jumlah Sampah (Ton)'].mean()
+
+fig_year, ax_year = plt.subplots(figsize=(12, 4))
+ax_year.plot(rata_harian.index, rata_harian.values, marker='o', color='navy')
+ax_year.set_title(f"Rata-Rata Prediksi Jumlah Sampah Harian Tahun {tahun_pilih_rata}")
+ax_year.set_xlabel("Tanggal")
+ax_year.set_ylabel("Jumlah Sampah (Ton)")
+ax_year.grid(True)
+st.pyplot(fig_year)

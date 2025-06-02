@@ -22,15 +22,18 @@ st.write("Data sampah dari tahun", df_sampah['TANGGAL'].dt.year.min(), "hingga",
 st.dataframe(df_sampah, use_container_width=True)
 
 # ======= Data CUACA =======
-st.header("🗑 Data Cuaca")
-df_cuaca['Tanggal'] = pd.to_datetime(df_sampah['Tanggal'])
-st.write("Data cuaca dari tahun", df_cuaca['Tanggal'].dt.year.min(), "hingga", df_cuaca['Tanggal'].dt.year.max())
+st.header("🌦 Data Cuaca")
+if 'Tanggal' in df_cuaca.columns:
+    df_cuaca['Tanggal'] = pd.to_datetime(df_cuaca['Tanggal'])
+    st.write("Data cuaca dari tahun", df_cuaca['Tanggal'].dt.year.min(), "hingga", df_cuaca['Tanggal'].dt.year.max())
+else:
+    st.warning("Kolom 'Tanggal' tidak ditemukan di data cuaca.")
 st.dataframe(df_cuaca, use_container_width=True)
 
 # ======= Data EKONOMI & SOSIAL =======
-st.header("🗑 Data Ekonomi Sosial")
-df_ekosos['Tahun'] = pd.to_datetime(df_ekosos['Tahun'])
-st.write("Data sosial ekonomi dari tahun", df_ekosos['Tahun'].dt.year.min(), "hingga", df_ekosos['Tahun'].dt.year.max())
+st.header("👨‍👩‍👧‍👦📈 Data Sosial Ekonomi")
+df_ekosos.columns = df_ekosos.columns.str.lower()
+st.write("Data dari tahun", df_ekosos['Tahun'].min(), "hingga", df_ekosos['Tahun'].max())
 st.dataframe(df_ekosos, use_container_width=True)
 
 # ========== Footer ==========

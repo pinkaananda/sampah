@@ -156,4 +156,23 @@ with tab4:
     st.pyplot(fig4)
 
     # --- 4. Statistik Rata-Rata Tahunan ---
-    st.markdown(
+    st.markdown("---")
+    st.subheader("📊 Tabel Rata-Rata Prediksi per Tahun")
+    rata_tahunan = data_prediksi.groupby('Tahun')['Jumlah Sampah (Ton)'].mean().reset_index()
+    st.dataframe(rata_tahunan, use_container_width=True)
+
+    # --- 5. Visualisasi Rata-Rata Tahunan ---
+    st.markdown("---")
+    st.subheader("Visualisasi Rata-Rata Prediksi per Tahun")
+    tahun_pilih_rata = st.selectbox("Pilih Tahun untuk Visualisasi Rata-Rata Harian", tahun_opsi_pred, key="tahun_rata_prediksi")
+
+    data_rata_tahun = data_prediksi[data_prediksi['Tahun'] == tahun_pilih_rata]
+    rata_harian = data_rata_tahun.groupby('Tanggal')['Jumlah Sampah (Ton)'].mean()
+
+    fig_year, ax_year = plt.subplots(figsize=(12, 4))
+    ax_year.plot(rata_harian.index, rata_harian.values, marker='o', color='navy')
+    ax_year.set_title(f"Rata-Rata Prediksi Jumlah Sampah Harian Tahun {tahun_pilih_rata}")
+    ax_year.set_xlabel("Tanggal")
+    ax_year.set_ylabel("Jumlah Sampah (Ton)")
+    ax_year.grid(True)
+    st.pyplot(fig_year)

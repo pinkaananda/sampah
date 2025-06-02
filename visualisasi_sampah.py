@@ -1,78 +1,60 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Tampilan Data Mentah", layout="wide")
+# Judul aplikasi
+st.title("Visualisasi Data Mentah Sampah, Cuaca, dan Sosial Ekonomi")
 
-st.title("📊 Tampilan Data Mentah untuk Prediksi Sampah")
-
-# Fungsi load data
+# Fungsi untuk load dan tampilkan data
 @st.cache_data
 def load_data():
-    data_sampah = pd.read_excel('data_sampah.xlsx')
+    data_sampah = pd.read_excel('data_sampah.xlsx', header=1)
     data_cuaca = pd.read_excel('data_cuaca.xlsx')
-    data_sosial_ekonomi = pd.read_excel('data_sosial_ekonomi.xlsx')
-    return data_sampah, data_cuaca, data_sosial_ekonomi
+    data_ekonomi = pd.read_excel('data_sosial_ekonomi.xlsx')
+    return data_sampah, data_cuaca, data_ekonomi
 
-# Load data
-data_sampah, data_cuaca, data_sosial_ekonomi = load_data()
+data_sampah, data_cuaca, data_ekonomi = load_data()
 
-# Sidebar untuk pilih dataset yang ingin ditampilkan
-dataset = st.sidebar.selectbox("Pilih Dataset yang ingin ditampilkan:", 
-                               ("Data Sampah", "Data Cuaca", "Data Sosial Ekonomi"))
+# Tampilkan data sampah
+st.header("Data Sampah")
+st.write("Tampilan 10 baris pertama data sampah")
+st.dataframe(data_sampah.head(10))
 
-if dataset == "Data Sampah":
-    st.subheader("Data Sampah")
-    st.write(f"Jumlah baris: {len(data_sampah)}")
-    st.dataframe(data_sampah)
+# Tampilkan data cuaca
+st.header("Data Cuaca")
+st.write("Tampilan 10 baris pertama data cuaca")
+st.dataframe(data_cuaca.head(10))
 
-elif dataset == "Data Cuaca":
-    st.subheader("Data Cuaca")
-    st.write(f"Jumlah baris: {len(data_cuaca)}")
-    st.dataframe(data_cuaca)
+# Tampilkan data sosial ekonomi
+st.header("Data Sosial Ekonomi")
+st.write("Tampilan 10 baris pertama data sosial ekonomi")
+st.dataframe(data_ekonomi.head(10))
 
-else:
-    st.subheader("Data Sosial Ekonomi")
-    st.write(f"Jumlah baris: {len(data_sosial_ekonomi)}")
-    st.dataframe(data_sosial_ekonomi)
+# Tambah fitur filter tahun pada data sampah jika kolom TANGGAL ada
+if 'TANGGAL' in data_sampah.columns:
+    data_sampah['TANGGAL'] = pd.to_datetime(data_sampah['TANGGAL'])
+    data_sampah['TAHUN'] = data_sampah['TANGGAL'].dt.year
 
-st.markdown("---")
-st.write("📌 Gunakan sidebar untuk memilih data yang ingin kamu lihat.")
+    tahun_list = sorted(data_sampah['TAHUN'].unique())
+    selected_year = st.sidebar.selectbox("Pilih Tahun untuk Data Sampah", tahun_list)
 
-st.set_page_config(page_title="Visualisasi Volume Sampah", layout="wide")
-st.title("📈 Visualisasi Volume Sampah per Tahun")
+    st.subheader(f"Data Sampah Tahun {selected_year}")
+    st.dataframe(data_sampah[data_sampah['TAHUN'] == selected_year])
 
-@st.cache_data
-def load_data():
-    data_sampah = pd.read_excel('data_sampah.xlsx')
-    return data_sampah
+# Filter tahun untuk data cuaca jika kolom tanggal ada
+if 'Tanggal' in data_cuaca.columns:
+    data_cuaca['Tanggal'] = pd.to_datetime(data_cuaca['Tanggal'])
+    data_cuaca['Tahun'] = data_cuaca['tanggal'].dt.year
 
-data_sampah = load_data()
+    tahun_list_cuaca = sorted(data_cuaca['Tahun'].unique())
+    selected_year_cuaca = st.sidebar.selectbox("Pilih Tahun untuk Data Cuaca", tahun_list_cuaca)
 
-# Pastikan kolom TANGGAL dalam tipe datetime
-data_sampah['TANGGAL'] = pd.to_datetime(data_sampah['TANGGAL'], errors='coerce')
+    st.subheader(f"Data Cuaca Tahun {selected_year_cuaca}")
+    st.dataframe(data_cuaca[data_cuaca['Tahun'] == selected_year_cuaca])
 
-# Buat kolom tahun
-data_sampah['TAHUN'] = data_sampah['TANGGAL'].dt.year
+# Filter tahun untuk data sosial ekonomi jika kolom tahun ada
+if 'Tahun' in data_ekonomi.columns:
+    tahun_list_ekonomi = sorted(data_ekonomi['Tahun'].unique())
+    selected_year_ekonomi = st.sidebar.selectbox("Pilih Tahun untuk Data Sosial Ekonomi", tahun_list_ekonomi)
 
-# Cek apakah ada kolom volume sampah (contoh nama kolom: 'VOL. SELURUH M3')
-if 'VOL. SELURUH M3' in data_sampah.columns:
-    # Bisa langsung pakai ini
-    data_sampah['VOLUME_TON'] = data_sampah['VOL. SELURUH M3'] * 0.25  # asumsi konversi 1 m3 = 0.25 ton
-else:
-    st.warning("Kolom volume sampah 'VOL. SELURUH M3' tidak ditemukan!")
-
-# Agregasi volume sampah per tahun
-vol_per_tahun = data_sampah.groupby('TAHUN')['VOLUME_TON'].sum().reset_index()
-
-st.write("### Volume Sampah Total per Tahun (Ton)")
-st.dataframe(vol_per_tahun)
-
-# Visualisasi dengan matplotlib
-fig, ax = plt.subplots()
-ax.bar(vol_per_tahun['TAHUN'], vol_per_tahun['VOLUME_TON'], color='skyblue')
-ax.set_xlabel('Tahun')
-ax.set_ylabel('Volume Sampah (Ton)')
-ax.set_title('Total Volume Sampah per Tahun')
-ax.grid(axis='y')
-
-st.pyplot(fig)
+    st.subheader(f"Data Sosial Ekonomi Tahun {selected_year_ekonomi}")
+    st.dataframe(data_ekonomi[data_ekonomi['Tahun'] == selected_year_ekonomi])

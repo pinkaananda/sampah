@@ -97,7 +97,7 @@ with tab4:
     st.subheader("Hasil Prediksi Jumlah Sampah (Ton)")
 
     # Load data prediksi
-    data_prediksi = pd.read_excel("hasil_prediksi.xlsx")
+    data_prediksi = pd.read_excel("hasil_prediksi_2025_2030.xlsx")
     data_prediksi['tanggal'] = pd.to_datetime(data_prediksi['Tanggal'])
     data_prediksi['tahun'] = data_prediksi['tanggal'].dt.year
     data_prediksi['bulan'] = data_prediksi['tanggal'].dt.month

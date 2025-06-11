@@ -9,13 +9,13 @@ st.set_page_config(page_title="Visualisasi Data Sampah & Eksterna", layout="wide
 st.title("PREDIKSI JUMLAH SAMPAH TPA BUMI AYU")
 
 # Load data
-data_sampah = pd.read_excel("data_sampah.xlsx", header=1)
+data_sampah = pd.read_excel("data_sampah.xlsx")
 data_cuaca = pd.read_excel("data_cuaca.xlsx")
 data_sosial_ekonomi = pd.read_excel("data_sosial_ekonomi.xlsx")
 data_prediksi = pd.read_csv("prediksi_sampah_2025_2030.csv")
 
 # Pastikan kolom tanggal benar
-data_sampah['TANGGAL'] = pd.to_datetime(data_sampah['TANGGAL'])
+data_sampah['Tanggal'] = pd.to_datetime(data_sampah['Tanggal'])
 data_cuaca['Tanggal'] = pd.to_datetime(data_cuaca['Tanggal'])
 data_prediksi['Tanggal'] = pd.to_datetime(data_prediksi['Tanggal'])
 data_prediksi['Tahun'] = data_prediksi['Tanggal'].dt.year
@@ -23,7 +23,7 @@ data_prediksi['Bulan'] = data_prediksi['Tanggal'].dt.month
 
 # Extract tahun jika belum ada
 if 'TAHUN' not in data_sampah.columns:
-    data_sampah['TAHUN'] = data_sampah['TANGGAL'].dt.year
+    data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 if 'tahun' not in data_cuaca.columns:
     data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
@@ -42,8 +42,8 @@ with tab1:
     # Filter dan plot
     data_sampah_tahun = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
     fig1, ax1 = plt.subplots(figsize=(12, 4))
-    ax1.plot(data_sampah_tahun['TANGGAL'], data_sampah_tahun['VOL. SELURUH M3'], color='green')
-    ax1.set_ylabel("Volume Sampah (m3)")
+    ax1.plot(data_sampah_tahun['Tanggal'], data_sampah_tahun['Total Volume Sampah (m³)'], color='green')
+    ax1.set_ylabel("Total Volume Sampah (m³)")
     ax1.set_xlabel("Tanggal")
     ax1.set_title(f"Volume Sampah Harian Tahun {tahun_pilih}")
     ax1.grid(True)

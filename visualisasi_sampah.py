@@ -167,7 +167,7 @@ with tab4:
     tahun_pilih_rata = st.selectbox("Pilih Tahun untuk Visualisasi Rata-Rata Harian", tahun_opsi_pred, key="tahun_rata_prediksi")
 
     data_rata_tahun = data_prediksi[data_prediksi['Tahun'] == tahun_pilih_rata]
-    rata_harian = data_rata_tahun.groupby('Tanggal')['Jumlah Sampah (Ton)'].mean()
+    rata_harian = data_rata_tahun.groupby('Tanggal')['Total Volume Sampah (m³)'].mean()
 
     fig_year, ax_year = plt.subplots(figsize=(12, 4))
     ax_year.plot(rata_harian.index, rata_harian.values, color='navy')

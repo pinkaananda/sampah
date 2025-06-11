@@ -12,7 +12,7 @@ st.title("PREDIKSI JUMLAH SAMPAH TPA BUMI AYU")
 data_sampah = pd.read_excel("data_sampah.xlsx")
 data_cuaca = pd.read_excel("data_cuaca.xlsx")
 data_sosial_ekonomi = pd.read_excel("data_sosial_ekonomi.xlsx")
-data_prediksi = pd.read_csv("prediksi_sampah_2025_2030.csv")
+data_prediksi = pd.read_excel("prediksi_sampah_2025_2030.xlsx")
 
 # Pastikan kolom tanggal benar
 data_sampah['Tanggal'] = pd.to_datetime(data_sampah['Tanggal'])

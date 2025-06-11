@@ -114,7 +114,7 @@ with tab4:
     # --- 2. Statistik Rata-Rata Bulanan ---
     st.markdown("---")
     st.subheader("📊 Tabel Rata-Rata Prediksi per Bulan")
-    rata_bulanan = data_prediksi.groupby(['Tahun', 'Bulan'])['Jumlah Sampah (Ton)'].mean().reset_index()
+    rata_bulanan = data_prediksi.groupby(['Tahun', 'Bulan'])['Total Volume Sampah (m³)'].mean().reset_index()
     bulan_nama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 
                   'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
     bulan_dict = dict(zip(range(1, 13), bulan_nama))
@@ -124,7 +124,7 @@ with tab4:
         categories=bulan_nama,
         ordered=True
     )
-    rata_bulanan_pivot = rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Jumlah Sampah (Ton)')
+    rata_bulanan_pivot = rata_bulanan.pivot(index='Bulan', columns='Tahun', values='Total Volume Sampah (m³)')
     st.dataframe(rata_bulanan_pivot, use_container_width=True)
 
     # --- 3. Visualisasi Prediksi Bulanan (Berdasarkan Filter) ---
@@ -158,7 +158,7 @@ with tab4:
     # --- 4. Statistik Rata-Rata Tahunan ---
     st.markdown("---")
     st.subheader("📊 Tabel Rata-Rata Prediksi per Tahun")
-    rata_tahunan = data_prediksi.groupby('Tahun')['Jumlah Sampah (Ton)'].mean().reset_index()
+    rata_tahunan = data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().reset_index()
     st.dataframe(rata_tahunan, use_container_width=True)
 
     # --- 5. Visualisasi Rata-Rata Tahunan ---

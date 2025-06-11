@@ -148,7 +148,7 @@ with tab4:
     # Plot
     fig4, ax4 = plt.subplots(figsize=(12, 4))
     ax4.plot(data_filtered['Tanggal'], data_filtered['Jumlah Sampah (Ton)'],
-             marker='o', linestyle='-', color='purple')
+             linestyle='-', color='purple')
     ax4.set_title(f"Prediksi Jumlah Sampah Harian - {bulan_dict[bulan_pilih_pred]} {tahun_pilih_pred}")
     ax4.set_xlabel("Tanggal")
     ax4.set_ylabel("Sampah (Ton)")
@@ -170,7 +170,7 @@ with tab4:
     rata_harian = data_rata_tahun.groupby('Tanggal')['Jumlah Sampah (Ton)'].mean()
 
     fig_year, ax_year = plt.subplots(figsize=(12, 4))
-    ax_year.plot(rata_harian.index, rata_harian.values, marker='o', color='navy')
+    ax_year.plot(rata_harian.index, rata_harian.values, color='navy')
     ax_year.set_title(f"Rata-Rata Prediksi Jumlah Sampah Harian Tahun {tahun_pilih_rata}")
     ax_year.set_xlabel("Tanggal")
     ax_year.set_ylabel("Jumlah Sampah (Ton)")

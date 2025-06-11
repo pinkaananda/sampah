@@ -104,10 +104,10 @@ with tab4:
     st.markdown("---")
     st.subheader("Visualisasi Prediksi Sampah Seluruh Periode (2025–2030)")
     fig_all, ax_all = plt.subplots(figsize=(14, 5))
-    ax_all.plot(data_prediksi['Tanggal'], data_prediksi['Jumlah Sampah (Ton)'], color='teal')
+    ax_all.plot(data_prediksi['Tanggal'], data_prediksi['Total Volume Sampah (m³)'], color='teal')
     ax_all.set_title("Prediksi Jumlah Sampah Harian 2025–2030")
     ax_all.set_xlabel("Tanggal")
-    ax_all.set_ylabel("Jumlah Sampah (Ton)")
+    ax_all.set_ylabel("Total Volume Sampah (m³)")
     ax_all.grid(True)
     st.pyplot(fig_all)
 
@@ -147,11 +147,11 @@ with tab4:
 
     # Plot
     fig4, ax4 = plt.subplots(figsize=(12, 4))
-    ax4.plot(data_filtered['Tanggal'], data_filtered['Jumlah Sampah (Ton)'],
+    ax4.plot(data_filtered['Tanggal'], data_filtered['Total Volume Sampah (m³)'],
              linestyle='-', color='purple')
     ax4.set_title(f"Prediksi Jumlah Sampah Harian - {bulan_dict[bulan_pilih_pred]} {tahun_pilih_pred}")
     ax4.set_xlabel("Tanggal")
-    ax4.set_ylabel("Sampah (Ton)")
+    ax4.set_ylabel("Total Volume Sampah (m³)")
     ax4.grid(True)
     st.pyplot(fig4)
 
@@ -173,6 +173,6 @@ with tab4:
     ax_year.plot(rata_harian.index, rata_harian.values, color='navy')
     ax_year.set_title(f"Rata-Rata Prediksi Jumlah Sampah Harian Tahun {tahun_pilih_rata}")
     ax_year.set_xlabel("Tanggal")
-    ax_year.set_ylabel("Jumlah Sampah (Ton)")
+    ax_year.set_ylabel("Total Volume Sampah (m³)")
     ax_year.grid(True)
     st.pyplot(fig_year)

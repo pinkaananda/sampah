@@ -31,7 +31,17 @@ st.markdown("""
             font-size: 1.2rem;
             margin-top: 0;
         }
+        .metric-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
         .metric-card {
+            flex: 1;
+            min-width: 220px;
+            max-width: 32%;
             background-color: #f5f5f5;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -123,23 +133,29 @@ with tab4:
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown(f"""
+        <div class="metric-row">
         <div class='metric-card'>
             <h4>Rata-Rata</h4>
             <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
+        </div>
         </div>""", unsafe_allow_html=True)
         
     with col2:
         st.markdown(f"""
+        <div class="metric-row">
         <div class='metric-card'>
             <h4>Tahun Maksimum</h4>
             <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
+        </div>
         </div>""", unsafe_allow_html=True)
         
     with col3:
         st.markdown(f"""
+        <div class="metric-row">
         <div class='metric-card'>
             <h4>Tanggal Tertinggi</h4>
             <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
+        </div>
         </div>""", unsafe_allow_html=True)
 
     # Tambahkan ini di Tab 4 (setelah "Prediksi Jumlah Sampah Harian")
@@ -150,21 +166,27 @@ with tab4:
     col4, col5, col6 = st.columns(3)
     with col4:
         st.markdown(f"""
+        <div class="metric-row">
         <div class='metric-card'>
             <h4>MAE</h4>
-            <p>{mae:.2f} ton</p>
+            <p>{mae:.2f}</p>
+        </div>
         </div>""", unsafe_allow_html=True)
     with col5:
         st.markdown(f"""
+        <div class="metric-row">
         <div class='metric-card'>
             <h4>RMSE</h4>
-            <p>{rmse:.2f} ton</p>
+            <p>{rmse:.2f}</p>
+        </div>
         </div>""", unsafe_allow_html=True)
     with col6:
         st.markdown(f"""
+        <div class="metric-row">
         <div class='metric-card'>
             <h4>MAPE</h4>
             <p>{mape:.2f}%</p>
+        </div>
         </div>""", unsafe_allow_html=True)
 
     

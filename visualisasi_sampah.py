@@ -146,7 +146,7 @@ with tab4:
         </div>
         <div class="metric-card">
             <h4>Sampah Minimum</h4>
-            <p>{data_prediksi[data_prediksi['Total Volume Sampah (m³)'].min():2f}</p>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].min():2f}</p>
         </div>
     </div>
     """, unsafe_allow_html=True)

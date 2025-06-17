@@ -41,7 +41,7 @@ st.markdown("""
         .metric-card {
             flex: 1;
             min-width: 250px;
-            max-width: 32%;
+            max-width: 24%;
             background-color: #f5f5f5;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -157,8 +157,6 @@ with tab4:
         data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')
     ), unsafe_allow_html=True)
 
-
-    
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
                   title="Prediksi Sampah Harian 2025–2030", color_discrete_sequence=['#0081A7'])
     st.plotly_chart(fig, use_container_width=True)

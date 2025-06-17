@@ -33,8 +33,8 @@ st.markdown("""
         }
     </style>
     <div class='hero'>
-        <h1>🧠 Prediksi Sampah Harian 2025–2030</h1>
-        <p>📈 Berbasis LSTM Autoregressive & Data Eksternal</p>
+        <h1>Prediksi Sampah Harian 2025–2030</h1>
+        <p>Berbasis LSTM Autoregressive & Data Eksternal</p>
     </div>
 """, unsafe_allow_html=True)
 

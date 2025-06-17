@@ -134,26 +134,22 @@ with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
-    st.markdown("""
+    st.markdown(f"""
     <div class="metric-row">
         <div class="metric-card">
             <h4>Rata-Rata</h4>
-            <p>{:.2f} m³</p>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
         </div>
         <div class="metric-card">
             <h4>Tahun Maksimum</h4>
-            <p>{}</p>
+            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
         </div>
         <div class="metric-card">
             <h4>Tanggal Tertinggi</h4>
-            <p>{}</p>
+            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
         </div>
     </div>
-    """.format(
-        data_prediksi['Total Volume Sampah (m³)'].mean(),
-        data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax(),
-        data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')
-    ), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
                   title="Prediksi Sampah Harian 2025–2030", color_discrete_sequence=['#0081A7'])

@@ -2,6 +2,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import requests
+from io import BytesIO
 
 # --- 🧱 KONFIGURASI HALAMAN ---
 st.set_page_config(
@@ -10,49 +12,30 @@ st.set_page_config(
     page_icon="🗑️"
 )
 
-# Custom CSS for theme
+# --- 🎨 CUSTOM STYLE ---
 st.markdown("""
     <style>
-        /* Background color & font */
-        body {
-            background-color: #f4f4f4;
+        html, body, [class*="css"]  {
             font-family: 'Segoe UI', sans-serif;
+            background-color: #F5F9FF;
         }
-
-        /* Title styling */
-        .title {
-            font-size: 36px;
+        .metric-label {
             font-weight: bold;
-            color: #2c3e50;
+            color: #006D77;
         }
-
-        /* Metric container */
-        div[data-testid="metric-container"] {
-            background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        /* Tabs highlight */
-        .stTabs [data-baseweb="tab"] {
-            background-color: #e8f6f3;
-            color: #2c3e50;
-            font-weight: bold;
-        }
-
-        /* Footer */
-        footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar
+# --- 🧭 SIDEBAR GLOBAL FILTER ---
 with st.sidebar:
-    st.markdown("### ⚙️ **Filter Global**", unsafe_allow_html=True)
-    show_raw = st.checkbox("🧾 Tampilkan Data Mentah", value=False)
-    st.markdown("---")
-    st.markdown("📅 *Dashboard interaktif prediksi harian 2021–2030*", unsafe_allow_html=True)
+    st.title("🔧 Filter Global")
+    show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
 
+# --- 📊 JUDUL UTAMA ---
+st.markdown("""
+    <h1 style='color:#006D77;'>🧠 Prediksi Jumlah Sampah Harian TPA Bumi Ayu</h1>
+    <p style='font-size:16px; color:#555;'>Skripsi | Prediksi LSTM Autoregressive | 2021–2030</p>
+""", unsafe_allow_html=True)
 
 # --- 📂 LOAD DATA ---
 data_sampah = pd.read_excel("data_sampah.xlsx")
@@ -76,7 +59,7 @@ tab1, tab2, tab3, tab4 = st.tabs(["📦 Data Sampah", "🌦️ Data Cuaca", "�
 
 # --- TAB 1 ---
 with tab1:
-    st.markdown("## 📦 Data Sampah Harian")
+    st.subheader("📦 Data Sampah Harian")
     tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
@@ -85,26 +68,26 @@ with tab1:
     col2.metric("Maksimum Harian", f"{df['Total Volume Sampah (m³)'].max():.2f} m³")
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
-                  labels={"Total Volume Sampah (m³)": "Volume (m³)"}, markers=True)
+                  labels={"Total Volume Sampah (m³)": "Volume (m³)"}, color_discrete_sequence=['#0081A7'])
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
         st.dataframe(data_sampah, use_container_width=True)
 
 # --- TAB 2 ---
 with tab2:
-    st.markdown("## 🌦️ Data Cuaca Harian")
+    st.subheader("🌦️ Data Cuaca Harian")
     tahun_cuaca = st.selectbox("Pilih Tahun", sorted(data_cuaca['Tahun'].unique()), key="cuaca_tahun")
     kolom_pilih = st.selectbox("Pilih Variabel Cuaca", data_cuaca.select_dtypes('number').columns.tolist())
     df = data_cuaca[data_cuaca['Tahun'] == tahun_cuaca]
-    fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}", markers=True)
+    fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}", color_discrete_sequence=['#00AFB9'])
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
         st.dataframe(data_cuaca, use_container_width=True)
 
 # --- TAB 3 ---
 with tab3:
-    st.markdown("## 📈 Data Sosial Ekonomi Tahunan")
-    fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], markers=True,
+    st.subheader("📈 Data Sosial Ekonomi Tahunan")
+    fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], color_discrete_sequence=['#F07167', '#00AFB9'],
                   title="Tren Jumlah Penduduk dan PDRB Per Kapita")
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
@@ -112,7 +95,7 @@ with tab3:
 
 # --- TAB 4 ---
 with tab4:
-    st.markdown("## 🔮 Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
+    st.subheader("🔮 Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Rata-Rata", f"{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³")
@@ -120,7 +103,7 @@ with tab4:
     col3.metric("Tanggal Tertinggi", data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y'))
 
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
-                  title="Prediksi Sampah Harian 2025–2030", markers=True)
+                  title="Prediksi Sampah Harian 2025–2030", color_discrete_sequence=['#0081A7'])
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
@@ -135,17 +118,21 @@ with tab4:
     bulan_pilih = st.selectbox("Pilih Bulan", list(range(1, 13)), format_func=lambda x: pd.to_datetime(str(x), format='%m').strftime('%B'))
     df_bulan = data_prediksi[(data_prediksi['Tahun'] == tahun_pilih) & (data_prediksi['Bulan'] == bulan_pilih)]
     fig = px.line(df_bulan, x='Tanggal', y='Total Volume Sampah (m³)',
-                  title=f"Prediksi Sampah Harian - {pd.to_datetime(str(bulan_pilih), format='%m').strftime('%B')} {tahun_pilih}", markers=True)
+                  title=f"Prediksi Sampah Harian - {pd.to_datetime(str(bulan_pilih), format='%m').strftime('%B')} {tahun_pilih}", color_discrete_sequence=['#F07167'])
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("### 📊 Rata-Rata Tahunan")
     rata_tahunan = data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().reset_index()
     fig_tahunan = px.bar(rata_tahunan, x='Tahun', y='Total Volume Sampah (m³)',
-                         title="Rata-Rata Prediksi Tahunan", text_auto='.2s')
+                         title="Rata-Rata Prediksi Tahunan", text_auto='.2s', color_discrete_sequence=['#00AFB9'])
     st.plotly_chart(fig_tahunan, use_container_width=True)
     if show_raw:
         st.dataframe(data_prediksi, use_container_width=True)
 
 # --- 📘 FOOTER ---
-st.markdown("---")
-st.caption("© 2025 | Nona | Skripsi Teknik Informatika – Prediksi Sampah Berbasis LSTM Autoregressive")
+st.markdown("""
+    ---
+    <p style='text-align:center; font-size:14px;'>
+        © 2025 | <strong>Nona</strong> | Skripsi Teknik Informatika – Prediksi Sampah Berbasis LSTM Autoregressive
+    </p>
+""", unsafe_allow_html=True)

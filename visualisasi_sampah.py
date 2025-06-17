@@ -131,7 +131,6 @@ with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
-    with col1:
         st.markdown(f"""
         <div class="metric-row">
         <div class='metric-card'>

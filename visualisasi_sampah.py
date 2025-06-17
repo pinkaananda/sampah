@@ -4,16 +4,55 @@ import pandas as pd
 import plotly.express as px
 
 # --- 🧱 KONFIGURASI HALAMAN ---
-st.set_page_config(page_title="Dashboard Prediksi Sampah", layout="wide", page_icon="🗑️")
+st.set_page_config(
+    page_title="Dashboard Prediksi Sampah", 
+    layout="wide", 
+    page_icon="🗑️"
+)
 
-# --- 🧭 SIDEBAR GLOBAL FILTER ---
+# Custom CSS for theme
+st.markdown("""
+    <style>
+        /* Background color & font */
+        body {
+            background-color: #f4f4f4;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Title styling */
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Metric container */
+        div[data-testid="metric-container"] {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* Tabs highlight */
+        .stTabs [data-baseweb="tab"] {
+            background-color: #e8f6f3;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
+# Sidebar
 with st.sidebar:
-    st.title("🔧 Filter Global")
-    show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
+    st.markdown("### ⚙️ **Filter Global**", unsafe_allow_html=True)
+    show_raw = st.checkbox("🧾 Tampilkan Data Mentah", value=False)
+    st.markdown("---")
+    st.markdown("📅 *Dashboard interaktif prediksi harian 2021–2030*", unsafe_allow_html=True)
 
-# --- 📊 JUDUL UTAMA ---
-st.markdown("# 🧠 Prediksi Jumlah Sampah Harian TPA Bumi Ayu")
-st.caption("Skripsi | Prediksi LSTM Autoregressive | 2021–2030")
 
 # --- 📂 LOAD DATA ---
 data_sampah = pd.read_excel("data_sampah.xlsx")

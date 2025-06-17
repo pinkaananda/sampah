@@ -121,10 +121,27 @@ with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Rata-Rata", f"{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³")
-    col2.metric("Tahun Maksimum", f"{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}")
-    col3.metric("Tanggal Tertinggi", data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y'))
-
+    with col1:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Rata-Rata</h4>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
+        
+    with col2:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Tahun Maksimum</h4>
+            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
+        </div>""", unsafe_allow_html=True)
+        
+    with col3:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Tanggal Tertinggi</h4>
+            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y'))</p>
+        </div>""", unsafe_allow_html=True)
+    
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
                   title="Prediksi Sampah Harian 2025–2030", color_discrete_sequence=['#0081A7'])
     st.plotly_chart(fig, use_container_width=True)

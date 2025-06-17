@@ -48,6 +48,11 @@ st.markdown("""
             text-align: center;
             box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
         }
+        @media (max-width: 768px) {
+            .metric-card {
+                max-width: 100%;
+            }
+        }
     </style>
     <div class='hero'>
         <h1>Prediksi Sampah Harian 2025–2030</h1>

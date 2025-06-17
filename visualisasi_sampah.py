@@ -131,51 +131,27 @@ with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
-    st.markdown(f"""
+    st.markdown("""
     <div class="metric-row">
-        <div class='metric-card'>
+        <div class="metric-card">
             <h4>Rata-Rata</h4>
-            <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
+            <p>{:.2f} m³</p>
         </div>
-        <div class='metric-card'>
+        <div class="metric-card">
             <h4>Tahun Maksimum</h4>
-            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
+            <p>{}</p>
         </div>
-        <div class='metric-card'>
+        <div class="metric-card">
             <h4>Tanggal Tertinggi</h4>
-            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
+            <p>{}</p>
         </div>
-    </div>""", unsafe_allow_html=True)
-    # Tambahkan ini di Tab 4 (setelah "Prediksi Jumlah Sampah Harian")
-    mae = 1.73  # Ganti dengan nilai aktualmu
-    rmse = 2.04
-    mape = 6.2  # dalam persen
+    </div>
+    """.format(
+        data_prediksi['Total Volume Sampah (m³)'].mean(),
+        data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax(),
+        data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')
+    ), unsafe_allow_html=True)
 
-    col4, col5, col6 = st.columns(3)
-    with col4:
-        st.markdown(f"""
-        <div class="metric-row">
-        <div class='metric-card'>
-            <h4>MAE</h4>
-            <p>{mae:.2f}</p>
-        </div>
-        </div>""", unsafe_allow_html=True)
-    with col5:
-        st.markdown(f"""
-        <div class="metric-row">
-        <div class='metric-card'>
-            <h4>RMSE</h4>
-            <p>{rmse:.2f}</p>
-        </div>
-        </div>""", unsafe_allow_html=True)
-    with col6:
-        st.markdown(f"""
-        <div class="metric-row">
-        <div class='metric-card'>
-            <h4>MAPE</h4>
-            <p>{mape:.2f}%</p>
-        </div>
-        </div>""", unsafe_allow_html=True)
 
     
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',

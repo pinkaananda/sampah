@@ -139,7 +139,7 @@ with tab4:
         st.markdown(f"""
         <div class='metric-card'>
             <h4>Tanggal Tertinggi</h4>
-            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')</p>
+            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
         </div>""", unsafe_allow_html=True)
     
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',

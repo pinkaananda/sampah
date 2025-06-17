@@ -39,7 +39,7 @@ st.markdown("""
 
 # --- 🧭 SIDEBAR GLOBAL FILTER ---
 with st.sidebar:
-    st.title("🔧 Filter Global")
+    st.title("Filter Global")
     show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
 
 # --- 📂 LOAD DATA ---
@@ -60,7 +60,7 @@ data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
 # --- 🧭 TABS ---
-tab1, tab2, tab3, tab4 = st.tabs(["📦 Data Sampah", "🌦️ Data Cuaca", "📈 Sosial Ekonomi", "🔮 Hasil Prediksi"])
+tab1, tab2, tab3, tab4 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi"])
 
 # --- TAB 1 ---
 with tab1:
@@ -69,8 +69,18 @@ with tab1:
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
     col1, col2 = st.columns(2)
-    col1.metric("Rata-rata Volume", f"{df['Total Volume Sampah (m³)'].mean():.2f} m³")
-    col2.metric("Maksimum Harian", f"{df['Total Volume Sampah (m³)'].max():.2f} m³")
+        with col1:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Rata-rata Volume</h4>
+            <p>{df['Total Volume Sampah (m³)'].mean():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Maksimum Harian</h4>
+            <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>
+        </div>""", unsafe_allow_html=True
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
                   labels={"Total Volume Sampah (m³)": "Volume (m³)"}, color_discrete_sequence=['#0081A7'])

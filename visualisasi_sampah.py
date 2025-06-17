@@ -43,12 +43,6 @@ with st.sidebar:
     st.title("🔧 Filter Global")
     show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
 
-# --- 📊 JUDUL UTAMA ---
-st.markdown("""
-    <h1 style='color:#006D77;'>🧠 Prediksi Jumlah Sampah Harian TPA Bumi Ayu</h1>
-    <p style='font-size:16px; color:#555;'>Skripsi | Prediksi LSTM Autoregressive | 2021–2030</p>
-""", unsafe_allow_html=True)
-
 # --- 📂 LOAD DATA ---
 data_sampah = pd.read_excel("data_sampah.xlsx")
 data_cuaca = pd.read_excel("data_cuaca.xlsx")

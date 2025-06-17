@@ -34,7 +34,7 @@ st.markdown("""
         .metric-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1rem;
             justify-content: space-between;
             margin-bottom: 2rem;
         }

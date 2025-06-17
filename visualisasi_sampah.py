@@ -31,7 +31,7 @@ st.markdown("""
             font-size: 1.2rem;
             margin-top: 0;
         }
-                .metric-card {
+        .metric-card {
             background-color: #f5f5f5;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -76,7 +76,7 @@ with tab1:
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
     col1, col2 = st.columns(2)
-        with col1:
+    with col1:
         st.subheader(f"""
         <div class='metric-card'>
             <h4>Rata-rata Volume</h4>

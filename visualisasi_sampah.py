@@ -39,9 +39,7 @@ st.markdown("""
             margin-bottom: 2rem;
         }
         .metric-card {
-            flex: 1;
-            min-width: 250px;
-            max-width: 24%;
+            flex: 1 1 30%;
             background-color: #f5f5f5;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -50,7 +48,7 @@ st.markdown("""
         }
         @media (max-width: 768px) {
             .metric-card {
-                max-width: 100%;
+                flex: 1 1 100%;
             }
         }
     </style>

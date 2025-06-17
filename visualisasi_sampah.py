@@ -31,6 +31,13 @@ st.markdown("""
             font-size: 1.2rem;
             margin-top: 0;
         }
+                .metric-card {
+            background-color: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+        }
     </style>
     <div class='hero'>
         <h1>Prediksi Sampah Harian 2025–2030</h1>

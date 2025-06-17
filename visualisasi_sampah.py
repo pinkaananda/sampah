@@ -131,8 +131,8 @@ with tab4:
     st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
-        st.markdown(f"""
-        <div class="metric-row">
+    st.markdown(f"""
+    <div class="metric-row">
         <div class='metric-card'>
             <h4>Rata-Rata</h4>
             <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
@@ -145,26 +145,7 @@ with tab4:
             <h4>Tanggal Tertinggi</h4>
             <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
         </div>
-        </div>""", unsafe_allow_html=True)
-        
-    with col2:
-        st.markdown(f"""
-        <div class="metric-row">
-        <div class='metric-card'>
-            <h4>Tahun Maksimum</h4>
-            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
-        </div>
-        </div>""", unsafe_allow_html=True)
-        
-    with col3:
-        st.markdown(f"""
-        <div class="metric-row">
-        <div class='metric-card'>
-            <h4>Tanggal Tertinggi</h4>
-            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
-        </div>
-        </div>""", unsafe_allow_html=True)
-
+    </div>""", unsafe_allow_html=True)
     # Tambahkan ini di Tab 4 (setelah "Prediksi Jumlah Sampah Harian")
     mae = 1.73  # Ganti dengan nilai aktualmu
     rmse = 2.04

@@ -138,6 +138,14 @@ with tab4:
             <h4>Rata-Rata</h4>
             <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
         </div>
+        <div class='metric-card'>
+            <h4>Tahun Maksimum</h4>
+            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
+        </div>
+        <div class='metric-card'>
+            <h4>Tanggal Tertinggi</h4>
+            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
+        </div>
         </div>""", unsafe_allow_html=True)
         
     with col2:

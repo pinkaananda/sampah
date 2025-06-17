@@ -46,7 +46,7 @@ with tab1:
     col2.metric("Maksimum Harian", f"{df['Total Volume Sampah (m³)'].max():.2f} m³")
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
-                  labels={"Total Volume Sampah (m³)": "Volume (m³)"}, markers=True)
+                  labels={"Total Volume Sampah (m³)": "Volume (m³)"})
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
         st.dataframe(data_sampah, use_container_width=True)
@@ -57,7 +57,7 @@ with tab2:
     tahun_cuaca = st.selectbox("Pilih Tahun", sorted(data_cuaca['Tahun'].unique()), key="cuaca_tahun")
     kolom_pilih = st.selectbox("Pilih Variabel Cuaca", data_cuaca.select_dtypes('number').columns.tolist())
     df = data_cuaca[data_cuaca['Tahun'] == tahun_cuaca]
-    fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}", markers=True)
+    fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}")
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
         st.dataframe(data_cuaca, use_container_width=True)
@@ -65,7 +65,7 @@ with tab2:
 # --- TAB 3 ---
 with tab3:
     st.markdown("## 📈 Data Sosial Ekonomi Tahunan")
-    fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], markers=True,
+    fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'],
                   title="Tren Jumlah Penduduk dan PDRB Per Kapita")
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
@@ -81,7 +81,7 @@ with tab4:
     col3.metric("Tanggal Tertinggi", data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y'))
 
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
-                  title="Prediksi Sampah Harian 2025–2030", markers=True)
+                  title="Prediksi Sampah Harian 2025–2030")
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")

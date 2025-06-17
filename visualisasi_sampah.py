@@ -40,7 +40,7 @@ st.markdown("""
         }
         .metric-card {
             flex: 1;
-            min-width: 220px;
+            min-width: 250px;
             max-width: 32%;
             background-color: #f5f5f5;
             padding: 1.5rem;

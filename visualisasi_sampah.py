@@ -71,7 +71,7 @@ tab1, tab2, tab3, tab4 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi",
 
 # --- TAB 1 ---
 with tab1:
-    st.subheader("📦 Data Sampah Harian")
+    st.subheader("Data Sampah Harian")
     tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
@@ -98,7 +98,7 @@ with tab1:
 
 # --- TAB 2 ---
 with tab2:
-    st.subheader("🌦️ Data Cuaca Harian")
+    st.subheader("Data Cuaca Harian")
     tahun_cuaca = st.selectbox("Pilih Tahun", sorted(data_cuaca['Tahun'].unique()), key="cuaca_tahun")
     kolom_pilih = st.selectbox("Pilih Variabel Cuaca", data_cuaca.select_dtypes('number').columns.tolist())
     df = data_cuaca[data_cuaca['Tahun'] == tahun_cuaca]
@@ -109,7 +109,7 @@ with tab2:
 
 # --- TAB 3 ---
 with tab3:
-    st.subheader("📈 Data Sosial Ekonomi Tahunan")
+    st.subheader("Data Sosial Ekonomi Tahunan")
     fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], color_discrete_sequence=['#F07167', '#00AFB9'],
                   title="Tren Jumlah Penduduk dan PDRB Per Kapita")
     st.plotly_chart(fig, use_container_width=True)
@@ -118,7 +118,7 @@ with tab3:
 
 # --- TAB 4 ---
 with tab4:
-    st.subheader("🔮 Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
+    st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Rata-Rata", f"{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³")

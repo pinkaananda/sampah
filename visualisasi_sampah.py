@@ -77,13 +77,14 @@ with tab1:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader(f"""
+        st.markdown(f"""
         <div class='metric-card'>
             <h4>Rata-rata Volume</h4>
             <p>{df['Total Volume Sampah (m³)'].mean():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
+        
     with col2:
-        st.subheader(f"""
+        st.markdown(f"""
         <div class='metric-card'>
             <h4>Maksimum Harian</h4>
             <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>

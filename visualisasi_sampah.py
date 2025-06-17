@@ -15,15 +15,27 @@ st.set_page_config(
 # --- 🎨 CUSTOM STYLE ---
 st.markdown("""
     <style>
-        html, body, [class*="css"]  {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #F5F9FF;
+        .hero {
+            background: linear-gradient(120deg, #00afb9, #006d77);
+            padding: 2rem;
+            border-radius: 1rem;
+            color: white;
+            text-align: center;
         }
-        .metric-label {
-            font-weight: bold;
-            color: #006D77;
+        .hero h1 {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 0.2rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-top: 0;
         }
     </style>
+    <div class='hero'>
+        <h1>🧠 Prediksi Sampah Harian 2025–2030</h1>
+        <p>📈 Berbasis LSTM Autoregressive & Data Eksternal</p>
+    </div>
 """, unsafe_allow_html=True)
 
 # --- 🧭 SIDEBAR GLOBAL FILTER ---

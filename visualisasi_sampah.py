@@ -87,7 +87,7 @@ with tab1:
         <div class='metric-card'>
             <h4>Maksimum Harian</h4>
             <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>
-        </div>""", unsafe_allow_html=True
+        </div>""", unsafe_allow_html=True)
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
                   labels={"Total Volume Sampah (m³)": "Volume (m³)"}, color_discrete_sequence=['#0081A7'])

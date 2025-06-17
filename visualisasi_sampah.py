@@ -141,12 +141,12 @@ with tab4:
             <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
         </div>
         <div class="metric-card">
-            <h4>Tahun Maksimum</h4>
-            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
+            <h4>Sampah Maksimum</h4>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].max():2f}</p>
         </div>
         <div class="metric-card">
-            <h4>Tanggal Tertinggi</h4>
-            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
+            <h4>Sampah Minimum</h4>
+            <p>{data_prediksi[data_prediksi['Total Volume Sampah (m³)'].min():2f}</p>
         </div>
     </div>
     """, unsafe_allow_html=True)

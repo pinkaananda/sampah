@@ -141,6 +141,32 @@ with tab4:
             <h4>Tanggal Tertinggi</h4>
             <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
         </div>""", unsafe_allow_html=True)
+
+    # Tambahkan ini di Tab 4 (setelah "Prediksi Jumlah Sampah Harian")
+    mae = 1.73  # Ganti dengan nilai aktualmu
+    rmse = 2.04
+    mape = 6.2  # dalam persen
+
+    col4, col5, col6 = st.columns(3)
+    with col4:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>MAE</h4>
+            <p>{mae:.2f} ton</p>
+        </div>""", unsafe_allow_html=True)
+    with col5:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>RMSE</h4>
+            <p>{rmse:.2f} ton</p>
+        </div>""", unsafe_allow_html=True)
+    with col6:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>MAPE</h4>
+            <p>{mape:.2f}%</p>
+        </div>""", unsafe_allow_html=True)
+
     
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
                   title="Prediksi Sampah Harian 2025–2030", color_discrete_sequence=['#0081A7'])

@@ -94,7 +94,7 @@ with tab1:
         st.markdown(f"""
         <div class='metric-card'>
             <h4>Minimum Harian</h4>
-            <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>
+            <p>{df['Total Volume Sampah (m³)'].min():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
@@ -138,14 +138,14 @@ with tab4:
     with col2:
         st.markdown(f"""
         <div class='metric-card'>
-            <h4>Tahun Maksimum</h4>
+            <h4>Sampah Maksimum</h4>
             <p>{data_prediksi['Total Volume Sampah (m³)'].max():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
         
     with col3:
         st.markdown(f"""
         <div class='metric-card'>
-            <h4>Tanggal Tertinggi</h4>
+            <h4>Sampah Minimum</h4>
             <p>{data_prediksi['Total Volume Sampah (m³)'].min():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
     

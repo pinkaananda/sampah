@@ -32,7 +32,7 @@ st.markdown("""
             margin-top: 0;
         }
         .metric-card {
-            background-color: #f5f5f5;
+            background-color: #e0f7fa;
             padding: 1.5rem;
             border-radius: 0.5rem;
             text-align: center;

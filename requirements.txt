@@ -7,4 +7,3 @@ streamlit-extras
 streamlit-autorefresh
 matplotlib
 seaborn
-st-aggrid

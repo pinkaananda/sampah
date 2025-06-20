@@ -75,7 +75,7 @@ with tab1:
     tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(2)
     with col1:
         st.markdown(f"""
         <div class='metric-card'>
@@ -88,6 +88,13 @@ with tab1:
         <div class='metric-card'>
             <h4>Maksimum Harian</h4>
             <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
+
+     with col3:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Minimum Harian</h4>
+            <p>{df['Total Volume Sampah (m³)'].min():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",

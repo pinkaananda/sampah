@@ -2,28 +2,33 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from st_aggrid import AgGrid, GridOptionsBuilder
+import requests
 from io import BytesIO
+import numpy as np
 
 # --- 🧱 KONFIGURASI HALAMAN ---
-st.set_page_config(page_title="Dashboard Prediksi Sampah", layout="wide", page_icon="🗑️")
+st.set_page_config(
+    page_title="Dashboard Prediksi Sampah", 
+    layout="wide", 
+    page_icon="🗑️"
+)
 
-# --- 💡 CUSTOM STYLING ---
+# --- 🎨 CUSTOM STYLE ---
 st.markdown("""
     <style>
-        .main-header {
-            background: linear-gradient(to right, #00796B, #004D40);
+        .hero {
+            background: linear-gradient(120deg, #00afb9, #006d77);
             padding: 2rem;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             color: white;
             text-align: center;
-            margin-bottom: 2rem;
         }
-        .main-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        .hero h1 {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 0.2rem;
         }
-        .main-header p {
+        .hero p {
             font-size: 1.2rem;
             margin-top: 0;
         }
@@ -35,19 +40,8 @@ st.markdown("""
             box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
         }
     </style>
-""", unsafe_allow_html=True)
-
-# --- 🧭 SIDEBAR GLOBAL FILTER ---
-with st.sidebar:
-    st.title("Filter Global")
-    show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
-    download_raw = st.checkbox("Tampilkan Tombol Unduh")
-
-# --- 📊 JUDUL UTAMA ---
-st.markdown("""
-    <div class='main-header'>
-        <h1>Prediksi Jumlah Sampah Harian TPA Bumi Ayu</h1>
-        <p>Skripsi Teknik Informatika | Prediksi LSTM Autoregressive | 2021–2030</p>
+    <div class='hero'>
+        <h1>Prediksi Sampah Harian 2025–2030</h1>
     </div>
 """, unsafe_allow_html=True)
 
@@ -64,114 +58,141 @@ data_prediksi['Tanggal'] = pd.to_datetime(data_prediksi['Tanggal'])
 data_prediksi['Tahun'] = data_prediksi['Tanggal'].dt.year
 data_prediksi['Bulan'] = data_prediksi['Tanggal'].dt.month
 
-# --- ✅ TAMBAHAN KOL ---
+# --- ✅ TAMBAHAN KOL  ---
 data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
-# --- FUNGSI DOWNLOAD ---
-def generate_download_link(df, filename):
-    towrite = BytesIO()
-    df.to_excel(towrite, index=False)
-    towrite.seek(0)
-    return st.download_button("📥 Unduh Data", data=towrite, file_name=filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+# --- 🧭 SIDEBAR GLOBAL FILTER ---
+with st.sidebar:
+    st.title("Filter Global")
+    show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
 
-# --- 🧭 TABS ---
-tab1, tab2, tab3, tab4 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi"])
+# --- 📊 TAB TUNGGAL: Data & Analisis ---
+st.markdown("## 📊 Data & Analisis")
 
-# --- TAB 1 ---
-with tab1:
-    st.markdown("## Data Sampah Harian")
+# --- 📦 DATA SAMPAH ---
+with st.expander("📦 Data Sampah Harian"):
     tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Rata-rata Volume", f"{df['Total Volume Sampah (m³)'].mean():.2f} m³")
-    col2.metric("Sampah Maksimum", f"{df['Total Volume Sampah (m³)'].max():.2f} m³")
-    col3.metric("Sampah Minimum", f"{df['Total Volume Sampah (m³)'].min():.2f} m³")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Rata-rata Volume</h4>
+            <p>{df['Total Volume Sampah (m³)'].mean():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Maksimum Harian</h4>
+            <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
-                  labels={"Total Volume Sampah (m³)": "Volume (m³)"}, markers=True)
+                  labels={"Total Volume Sampah (m³)": "Volume (m³)"}, color_discrete_sequence=['#0081A7'])
     st.plotly_chart(fig, use_container_width=True)
-
     if show_raw:
-        st.markdown("### 📄 Tabel Data Sampah")
-        gb = GridOptionsBuilder.from_dataframe(data_sampah)
-        gb.configure_pagination()
-        AgGrid(data_sampah, gridOptions=gb.build(), theme='balham')
-        if download_raw:
-            generate_download_link(data_sampah, "data_sampah.xlsx")
+        st.dataframe(data_sampah, use_container_width=True)
 
-# --- TAB 2 ---
-with tab2:
-    st.markdown("## Data Cuaca Harian")
-    tahun_cuaca = st.selectbox("Pilih Tahun", sorted(data_cuaca['Tahun'].unique()), key="cuaca_tahun")
+# --- 🌧️ DATA CUACA ---
+with st.expander("🌧️ Data Cuaca Harian"):
+    tahun_cuaca = st.selectbox("Pilih Tahun Cuaca", sorted(data_cuaca['Tahun'].unique()), key="cuaca_tahun")
     kolom_pilih = st.selectbox("Pilih Variabel Cuaca", data_cuaca.select_dtypes('number').columns.tolist())
     df = data_cuaca[data_cuaca['Tahun'] == tahun_cuaca]
-    fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}", markers=True)
+    fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}", color_discrete_sequence=['#00AFB9'])
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
-        st.markdown("### 📄 Tabel Data Cuaca")
-        gb = GridOptionsBuilder.from_dataframe(data_cuaca)
-        gb.configure_pagination()
-        AgGrid(data_cuaca, gridOptions=gb.build(), theme='balham')
-        if download_raw:
-            generate_download_link(data_cuaca, "data_cuaca.xlsx")
+        st.dataframe(data_cuaca, use_container_width=True)
 
-# --- TAB 3 ---
-with tab3:
-    st.markdown("## Data Sosial Ekonomi Tahunan")
-    fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], markers=True,
+# --- 💰 DATA SOSIAL EKONOMI ---
+with st.expander("💰 Data Sosial Ekonomi Tahunan"):
+    fig = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], color_discrete_sequence=['#F07167', '#00AFB9'],
                   title="Tren Jumlah Penduduk dan PDRB Per Kapita")
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
-        st.markdown("### 📄 Tabel Data Sosial Ekonomi")
-        gb = GridOptionsBuilder.from_dataframe(data_sosial_ekonomi)
-        gb.configure_pagination()
-        AgGrid(data_sosial_ekonomi, gridOptions=gb.build(), theme='balham')
-        if download_raw:
-            generate_download_link(data_sosial_ekonomi, "data_sosial_ekonomi.xlsx")
+        st.dataframe(data_sosial_ekonomi, use_container_width=True)
 
-# --- TAB 4 ---
-with tab4:
-    st.markdown("## Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
+# --- 🔮 HASIL PREDIKSI ---
+with st.expander("🔮 Hasil Prediksi 2025–2030"):
+    st.subheader("Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
+
     col1, col2, col3 = st.columns(3)
-    col1.metric("Rata-Rata", f"{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³")
-    col2.metric("Sampah Maksimum", f"{data_prediksi['Total Volume Sampah (m³)'].max():.2f} m³")
-    col3.metric("Sampah Minimum", f"{data_prediksi['Total Volume Sampah (m³)'].min():.2f} m³")
+    with col1:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Rata-Rata</h4>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Sampah Maksimum</h4>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].max():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
+
+    with col3:
+        st.markdown(f"""
+        <div class='metric-card'>
+            <h4>Sampah Minimum</h4>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].min():.2f} m³</p>
+        </div>""", unsafe_allow_html=True)
 
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',
-                  title="Prediksi Sampah Harian 2025–2030", markers=True)
+                  title="Prediksi Sampah Harian 2025–2030", color_discrete_sequence=['#0081A7'])
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
-    st.markdown("### Rata-Rata Bulanan")
+    st.markdown("### 📊 Rata-Rata Bulanan")
     bulanan = data_prediksi.groupby(['Tahun', 'Bulan'])['Total Volume Sampah (m³)'].mean().reset_index()
     bulanan['BulanStr'] = pd.to_datetime(bulanan['Bulan'], format='%m').dt.strftime('%b')
     pivot_bulanan = bulanan.pivot(index='BulanStr', columns='Tahun', values='Total Volume Sampah (m³)')
     st.dataframe(pivot_bulanan, use_container_width=True)
 
-    st.markdown("### Visualisasi Harian per Bulan")
-    tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_prediksi['Tahun'].unique()))
+    st.markdown("### 📈 Visualisasi Harian per Bulan")
+    tahun_pilih = st.selectbox("Pilih Tahun Prediksi", sorted(data_prediksi['Tahun'].unique()))
     bulan_pilih = st.selectbox("Pilih Bulan", list(range(1, 13)), format_func=lambda x: pd.to_datetime(str(x), format='%m').strftime('%B'))
     df_bulan = data_prediksi[(data_prediksi['Tahun'] == tahun_pilih) & (data_prediksi['Bulan'] == bulan_pilih)]
     fig = px.line(df_bulan, x='Tanggal', y='Total Volume Sampah (m³)',
-                  title=f"Prediksi Sampah Harian - {pd.to_datetime(str(bulan_pilih), format='%m').strftime('%B')} {tahun_pilih}", markers=True)
+                  title=f"Prediksi Sampah Harian - {pd.to_datetime(str(bulan_pilih), format='%m').strftime('%B')} {tahun_pilih}", color_discrete_sequence=['#F07167'])
     st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown("### Rata-Rata Tahunan")
+    st.markdown("### 📊 Rata-Rata Tahunan")
     rata_tahunan = data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().reset_index()
     fig_tahunan = px.bar(rata_tahunan, x='Tahun', y='Total Volume Sampah (m³)',
-                         title="Rata-Rata Prediksi Tahunan", text_auto='.2s')
+                         title="Rata-Rata Prediksi Tahunan", text_auto='.2s', color_discrete_sequence=['#00AFB9'])
     st.plotly_chart(fig_tahunan, use_container_width=True)
 
+    st.markdown("### 🧮 Evaluasi Metrik")
+    if 'Jumlah Sampah Asli (m³)' in data_prediksi.columns:
+        y_true = data_prediksi['Jumlah Sampah Asli (m³)']
+        y_pred = data_prediksi['Total Volume Sampah (m³)']
+
+        mae = np.mean(np.abs(y_true - y_pred))
+        mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+        rmse = np.sqrt(np.mean((y_true - y_pred)**2))
+
+        st.write(f"**MAE:** {mae:.2f} m³")
+        st.write(f"**MAPE:** {mape:.2f}%")
+        st.write(f"**RMSE:** {rmse:.2f} m³")
+
+        fig_eval = px.line(data_prediksi, x='Tanggal')
+        fig_eval.add_scatter(y=y_true, name='Aktual')
+        fig_eval.add_scatter(y=y_pred, name='Prediksi')
+        fig_eval.update_layout(title="Perbandingan Aktual vs Prediksi", xaxis_title="Tanggal", yaxis_title="Volume Sampah (m³)")
+        st.plotly_chart(fig_eval, use_container_width=True)
+    else:
+        st.info("Kolom 'Jumlah Sampah Asli (m³)' tidak tersedia untuk evaluasi.")
+
     if show_raw:
-        st.markdown("### 📄 Tabel Data Prediksi")
-        gb = GridOptionsBuilder.from_dataframe(data_prediksi)
-        gb.configure_pagination()
-        AgGrid(data_prediksi, gridOptions=gb.build(), theme='balham')
-        if download_raw:
-            generate_download_link(data_prediksi, "prediksi_sampah_2025_2030.xlsx")
+        st.dataframe(data_prediksi, use_container_width=True)
 
 # --- 📘 FOOTER ---
-st.markdown("---")
-st.caption("© 2025 | Nona | Skripsi Teknik Informatika – Prediksi Sampah Berbasis LSTM Autoregressive")
+st.markdown("""
+    ---
+    <p style='text-align:center; font-size:14px;'>
+        © 2025 | <strong>Nona</strong> | Skripsi Teknik Informatika – Prediksi Sampah Berbasis LSTM Autoregressive
+    </p>
+""", unsafe_allow_html=True)

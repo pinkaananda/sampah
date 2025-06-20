@@ -7,3 +7,5 @@ plotly
 streamlit-extras
 kaleido
 numpy
+st_aggrid
+streamlit-autorefresh

@@ -99,10 +99,18 @@ if page == "Data Historis":
         tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
         df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
-        start_date, end_date = st.slider("Pilih Rentang Tanggal", 
-            min_value=df['Tanggal'].min(), max_value=df['Tanggal'].max(),
-            value=(df['Tanggal'].min(), df['Tanggal'].max()))
-        df = df[(df['Tanggal'] >= start_date) & (df['Tanggal'] <= end_date)]
+        if not df.empty and pd.api.types.is_datetime64_any_dtype(df['Tanggal']):
+    start_date, end_date = st.slider("Pilih Rentang Tanggal", 
+        min_value=df['Tanggal'].min(), 
+        max_value=df['Tanggal'].max(),
+        value=(df['Tanggal'].min(), df['Tanggal'].max()))
+
+    df = df[(df['Tanggal'] >= start_date) & (df['Tanggal'] <= end_date)]
+
+    # ... lanjutkan visualisasi
+else:
+    st.warning("⚠️ Data kosong atau kolom Tanggal belum tersedia. Silakan periksa filter tahun atau data.")
+
 
         col1, col2, col3 = st.columns(3)
         col1.metric("Rata-rata", f"{df['Total Volume Sampah (m³)'].mean():.2f} m³")

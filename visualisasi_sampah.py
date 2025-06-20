@@ -100,10 +100,9 @@ if page == "Data Historis":
         df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
         df = df.sort_values('Tanggal')
-        tanggal_min = df['Tanggal'].min()
-        tanggal_max = df['Tanggal'].max()
+        start_date = df['Tanggal'].min()
+        end_date = df['Tanggal'].max()
 
-        start_date, end_date = pd.to_datetime([tanggal_min, tanggal_max])
         slider_val = st.slider("Pilih Rentang Tanggal", min_value=start_date, max_value=end_date,
                                value=(start_date, end_date), format="%Y-%m-%d")
         df = df[(df['Tanggal'] >= slider_val[0]) & (df['Tanggal'] <= slider_val[1])]
@@ -189,10 +188,3 @@ elif page == "Evaluasi Model":
                        labels={"value": "Loss", "epoch": "Epoch"},
                        title="Kurva Loss Pelatihan vs Validasi")
     st.plotly_chart(fig_loss, use_container_width=True)
-
-# --- 📘 FOOTER ---
-st.markdown("""
-    <div class='footer'>
-        © 2025 | <strong>Nona</strong> | Skripsi Teknik Informatika – Prediksi Sampah Berbasis LSTM Autoregressive
-    </div>
-""", unsafe_allow_html=True)

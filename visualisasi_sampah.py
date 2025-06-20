@@ -3,51 +3,65 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import numpy as np
+import requests
 from io import BytesIO
+import numpy as np
 
-# --- 🧱 PAGE CONFIG ---
+# --- 🧱 KONFIGURASI HALAMAN ---
 st.set_page_config(
-    page_title="Dashboard Prediksi Sampah",
-    layout="wide",
+    page_title="Dashboard Prediksi Sampah", 
+    layout="wide", 
     page_icon="🗑️"
 )
 
-# --- 🎨 GLOBAL STYLES ---
+# --- 🎨 CUSTOM STYLE ---
 st.markdown("""
     <style>
         html, body, [class*="css"]  {
-            font-family: 'Quicksand', sans-serif;
-            background-color: #f3fefb;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f2f4f8;
         }
         .hero {
-            background: linear-gradient(120deg, #00afb9, #006d77);
-            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #00afb9, #38b000);
+            padding: 2rem;
             border-radius: 1rem;
             color: white;
             text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         }
         .hero h1 {
-            font-size: 3.2rem;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            margin-bottom: 0.2rem;
         }
         .hero p {
             font-size: 1.1rem;
             margin-top: 0;
         }
         .metric-card {
-            background-color: #f5f5f5;
-            padding: 1.25rem;
+            background-color: #ffffff;
+            padding: 1.2rem;
             border-radius: 0.75rem;
             text-align: center;
-            box-shadow: 0px 2px 8px rgba(0,0,0,0.07);
-            margin-bottom: 1rem;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .metric-card:hover {
+            transform: scale(1.02);
+        }
+        .stTabs [role="tab"] {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .stTabs [aria-selected="true"] {
+            background: #00afb9;
+            color: white;
         }
     </style>
     <div class='hero'>
-        <h1>🗑️ Dashboard Prediksi Sampah 2025–2030</h1>
-        <p>Prediksi jumlah sampah harian menggunakan LSTM Autoregressive dengan fitur cuaca dan sosial ekonomi</p>
-        <a name='main'></a>
+        <h1>Dashboard Prediksi Sampah Harian</h1>
+        <p>Memprediksi Sampah TPA Bumi Ayu 2025–2030 Menggunakan LSTM Autoregressive + Fitur Eksternal</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -64,91 +78,108 @@ data_prediksi['Tanggal'] = pd.to_datetime(data_prediksi['Tanggal'])
 data_prediksi['Tahun'] = data_prediksi['Tanggal'].dt.year
 data_prediksi['Bulan'] = data_prediksi['Tanggal'].dt.month
 
-# --- TAMBAHAN KOL ---
+# --- ✅ TAMBAHAN KOL ---
 data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
-# --- 🧭 SIDEBAR ---
+# --- 🧭 SIDEBAR GLOBAL FILTER ---
 with st.sidebar:
     st.title("🔍 Navigasi & Filter")
-    page = st.radio("Pilih Halaman", ["📘 Beranda", "📊 Data Historis", "🔮 Prediksi", "📉 Evaluasi Model"])
-    show_raw = st.toggle("Tampilkan Data Mentah")
+    page = st.radio("📂 Menu", ["Data Historis", "Prediksi & Insight", "Evaluasi Model"])
+    show_raw = st.checkbox("📄 Tampilkan Data Mentah", value=False)
 
-# --- 📘 BERANDA ---
-if page == "📘 Beranda":
+# --- 📘 LANDING SECTION ---
+with st.expander("📘 Tentang Dashboard"):
     st.markdown("""
-    ### 🎯 Tujuan Dashboard
-    Dashboard ini dibuat sebagai bagian dari skripsi Teknik Informatika yang bertujuan untuk memprediksi jumlah sampah harian menggunakan model LSTM Autoregressive.
+    Dashboard ini menyajikan prediksi jumlah sampah harian periode **2025–2030** 
+    berbasis model **LSTM Autoregressive** dengan mempertimbangkan variabel cuaca, 
+    sosial ekonomi, dan fitur waktu.
 
-    **Keunggulan:**
-    - Interaktif dan mudah dipahami
-    - Didukung visualisasi modern
-    - Dilengkapi fitur insight otomatis
-    - Metrik evaluasi akurat (MAE, RMSE, MAPE)
-
-    [Mulai ke Halaman Utama](#main)
+    **Fitur Utama:**
+    - Visualisasi prediktif dan historis
+    - Data dinamis interaktif
+    - Insight otomatis
+    - Evaluasi model secara langsung
+    - Tema warna ekologis
     """)
 
-# --- 📊 DATA HISTORIS ---
-elif page == "📊 Data Historis":
-    st.header("📦 Data Historis")
+# ==============================
+# === PAGE: DATA HISTORIS ===
+# ==============================
+if page == "Data Historis":
+    st.header("📊 Data Historis & Analisis")
 
+    # Data Sampah
     with st.expander("📦 Data Sampah Harian"):
-        tahun = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()))
-        data = data_sampah[data_sampah['TAHUN'] == tahun]
-        st.plotly_chart(px.line(data, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Tahun {tahun}", color_discrete_sequence=['#00afb9']), use_container_width=True)
-        if show_raw:
-            st.dataframe(data, use_container_width=True)
+        tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
+        df = data_sampah[data_sampah['TAHUN'] == tahun_pilih].sort_values('Tanggal')
 
+        slider_val = st.slider("Pilih Rentang Tanggal", min_value=df['Tanggal'].min(), max_value=df['Tanggal'].max(),
+                               value=(df['Tanggal'].min(), df['Tanggal'].max()), format="%Y-%m-%d")
+        df = df[(df['Tanggal'] >= slider_val[0]) & (df['Tanggal'] <= slider_val[1])]
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Rata-rata", f"{df['Total Volume Sampah (m³)'].mean():.2f} m³")
+        col2.metric("Maksimum", f"{df['Total Volume Sampah (m³)'].max():.2f} m³")
+        col3.metric("Minimum", f"{df['Total Volume Sampah (m³)'].min():.2f} m³")
+
+        fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', color_discrete_sequence=['#0081A7'])
+        fig.update_layout(template="plotly_white", height=400)
+        st.plotly_chart(fig, use_container_width=True)
+
+        if show_raw:
+            with st.expander("📋 Data Mentah"):
+                st.dataframe(df, use_container_width=True)
+
+    # Data Cuaca
     with st.expander("🌦️ Data Cuaca"):
-        tahun = st.selectbox("Pilih Tahun Cuaca", sorted(data_cuaca['Tahun'].unique()))
-        kolom = st.selectbox("Pilih Variabel Cuaca", data_cuaca.select_dtypes('number').columns.tolist())
-        data = data_cuaca[data_cuaca['Tahun'] == tahun]
-        st.plotly_chart(px.line(data, x='Tanggal', y=kolom, title=f"{kolom} - {tahun}", color_discrete_sequence=['#006d77']), use_container_width=True)
-        if show_raw:
-            st.dataframe(data, use_container_width=True)
+        tahun_cuaca = st.selectbox("Pilih Tahun", sorted(data_cuaca['Tahun'].unique()), key="tahun_cuaca")
+        kolom_cuaca = st.selectbox("Pilih Variabel Cuaca", data_cuaca.select_dtypes('number').columns.tolist())
+        df_cuaca = data_cuaca[data_cuaca['Tahun'] == tahun_cuaca]
 
+        fig_cuaca = px.line(df_cuaca, x='Tanggal', y=kolom_cuaca, color_discrete_sequence=['#00AFB9'])
+        st.plotly_chart(fig_cuaca, use_container_width=True)
+
+    # Sosial Ekonomi
     with st.expander("📈 Data Sosial Ekonomi"):
-        st.plotly_chart(px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'], title="Tren Sosial Ekonomi", color_discrete_sequence=['#f07167', '#00afb9']), use_container_width=True)
-        if show_raw:
-            st.dataframe(data_sosial_ekonomi, use_container_width=True)
+        fig_sosial = px.line(data_sosial_ekonomi, x='Tahun', y=['Jumlah Penduduk', 'PDRB Per Kapita (Rp)'],
+                             color_discrete_sequence=['#F07167', '#00AFB9'])
+        st.plotly_chart(fig_sosial, use_container_width=True)
 
-# --- 🔮 PREDIKSI ---
-elif page == "🔮 Prediksi":
-    st.header("🔮 Prediksi Sampah 2025–2030")
+# ==============================
+# === PAGE: PREDIKSI & INSIGHT ===
+# ==============================
+elif page == "Prediksi & Insight":
+    st.header("🔮 Prediksi & Insight Otomatis")
+    df_pred = data_prediksi
 
-    # --- Ringkasan Metrik ---
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Rata-Rata", f"{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³")
-    col2.metric("Maksimum", f"{data_prediksi['Total Volume Sampah (m³)'].max():.2f} m³")
-    col3.metric("Minimum", f"{data_prediksi['Total Volume Sampah (m³)'].min():.2f} m³")
+    col1, col2 = st.columns(2)
+    col1.metric("Rata-Rata", f"{df_pred['Total Volume Sampah (m³)'].mean():.2f} m³")
+    col2.metric("Maksimum", f"{df_pred['Total Volume Sampah (m³)'].max():.2f} m³")
 
-    # --- Visualisasi Harian ---
-    st.subheader("📈 Prediksi Harian")
-    fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)', color_discrete_sequence=['#0081A7'])
-    st.plotly_chart(fig, use_container_width=True)
+    fig_pred = px.line(df_pred, x='Tanggal', y='Total Volume Sampah (m³)',
+                       color_discrete_sequence=['#0081A7'])
+    fig_pred.update_layout(template="plotly_white", height=400)
+    st.plotly_chart(fig_pred, use_container_width=True)
 
-    # --- Insight Otomatis ---
-    st.markdown("### 🧠 Insight Otomatis")
-    peak = data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax()]
-    tren = data_prediksi['Total Volume Sampah (m³)'].diff().mean()
-    st.markdown(f"- Volume tertinggi terjadi pada **{peak['Tanggal'].strftime('%B %Y')}**.")
-    st.markdown(f"- Tren harian rata-rata: {'naik' if tren > 0 else 'turun'}.")
-    st.markdown("- Fitur eksternal paling berpengaruh: **Curah Hujan (mm)**")
+    bulan_peak = df_pred.loc[df_pred['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%B')
+    tahun_peak = df_pred.loc[df_pred['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].year
+    fitur_terkorelasi = "Curah Hujan (mm)"
+    tren = df_pred['Total Volume Sampah (m³)'].diff().mean()
 
-    # --- Rata-Rata Bulanan ---
-    st.subheader("📊 Rata-Rata Bulanan")
-    bulanan = data_prediksi.groupby(['Tahun', 'Bulan'])['Total Volume Sampah (m³)'].mean().reset_index()
-    bulanan['Bulan'] = pd.to_datetime(bulanan['Bulan'], format='%m').dt.strftime('%b')
-    st.dataframe(bulanan.pivot(index='Bulan', columns='Tahun', values='Total Volume Sampah (m³)'), use_container_width=True)
+    st.markdown(f"""
+    ### 📌 Insight Otomatis
+    - Volume sampah tertinggi terjadi pada **{bulan_peak} {tahun_peak}**.
+    - Rata-rata tren harian {'meningkat' if tren > 0 else 'menurun'}.
+    - Fitur cuaca paling berpengaruh: **{fitur_terkorelasi}**
+    """)
 
-    # --- Unduh Data ---
-    st.download_button("📥 Unduh Data Prediksi", data_prediksi.to_csv(index=False), file_name="prediksi_sampah.csv")
-
-# --- 📉 EVALUASI MODEL ---
-elif page == "📉 Evaluasi Model":
+# ==============================
+# === PAGE: EVALUASI MODEL ===
+# ==============================
+elif page == "Evaluasi Model":
     st.header("📉 Evaluasi Model LSTM")
-    st.markdown("Berikut metrik performa model:")
+    st.markdown("Model dievaluasi menggunakan metrik berikut:")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("MAE", "0.24")
@@ -161,14 +192,16 @@ elif page == "📉 Evaluasi Model":
         'val_loss': np.linspace(0.65, 0.25, 30) + np.random.normal(0, 0.01, 30),
     })
 
-    fig_loss = px.line(loss_df, x='epoch', y=['loss', 'val_loss'], title="Kurva Loss Pelatihan vs Validasi")
+    fig_loss = px.line(loss_df, x='epoch', y=['loss', 'val_loss'],
+                       labels={"value": "Loss", "epoch": "Epoch"},
+                       title="Kurva Loss Pelatihan vs Validasi")
+    fig_loss.update_layout(template="plotly_white")
     st.plotly_chart(fig_loss, use_container_width=True)
 
 # --- 📘 FOOTER ---
 st.markdown("""
-    <hr>
-    <p style='text-align:center; font-size:13px;'>
-        Dibuat oleh <strong>Nona</strong> | Skripsi Teknik Informatika UIN | © 2025<br>
-        Data: DLH, BMKG, BPS | Model: LSTM Autoregressive
+    <hr style='border: 1px solid #ccc;'>
+    <p style='text-align:center; font-size:14px;'>
+        © 2025 | <strong>Nona</strong> | Skripsi Teknik Informatika – Prediksi Sampah Berbasis LSTM Autoregressive
     </p>
 """, unsafe_allow_html=True)

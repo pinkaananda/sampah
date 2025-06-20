@@ -132,14 +132,14 @@ with tab4:
         st.markdown(f"""
         <div class='metric-card'>
             <h4>Tahun Maksimum</h4>
-            <p>{data_prediksi.groupby('Tahun')['Total Volume Sampah (m³)'].mean().idxmax()}</p>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].max():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
         
     with col3:
         st.markdown(f"""
         <div class='metric-card'>
             <h4>Tanggal Tertinggi</h4>
-            <p>{data_prediksi.loc[data_prediksi['Total Volume Sampah (m³)'].idxmax(), 'Tanggal'].strftime('%d %b %Y')}</p>
+            <p>{data_prediksi['Total Volume Sampah (m³)'].min():.2f} m³</p>
         </div>""", unsafe_allow_html=True)
     
     fig = px.line(data_prediksi, x='Tanggal', y='Total Volume Sampah (m³)',

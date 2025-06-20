@@ -1,10 +1,10 @@
+st-aggrid==0.3.4.post3
+plotly
 streamlit
 pandas
 numpy
-plotly
+openpyxl
+streamlit-extras
+streamlit-autorefresh
 matplotlib
 seaborn
-openpyxl
-streamlit-autorefresh
-kaleido
-

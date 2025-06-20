@@ -2,6 +2,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from st_aggrid import AgGrid, GridOptionsBuilder
+from io import BytesIO
 
 # --- 🧱 KONFIGURASI HALAMAN ---
 st.set_page_config(page_title="Dashboard Prediksi Sampah", layout="wide", page_icon="🗑️")
@@ -39,6 +41,7 @@ st.markdown("""
 with st.sidebar:
     st.title("Filter Global")
     show_raw = st.checkbox("Tampilkan Data Mentah", value=False)
+    download_raw = st.checkbox("Tampilkan Tombol Unduh")
 
 # --- 📊 JUDUL UTAMA ---
 st.markdown("""
@@ -61,12 +64,19 @@ data_prediksi['Tanggal'] = pd.to_datetime(data_prediksi['Tanggal'])
 data_prediksi['Tahun'] = data_prediksi['Tanggal'].dt.year
 data_prediksi['Bulan'] = data_prediksi['Tanggal'].dt.month
 
-# --- ✅ TAMBAHAN KOL  ---
+# --- ✅ TAMBAHAN KOL ---
 data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
+# --- FUNGSI DOWNLOAD ---
+def generate_download_link(df, filename):
+    towrite = BytesIO()
+    df.to_excel(towrite, index=False)
+    towrite.seek(0)
+    return st.download_button("📥 Unduh Data", data=towrite, file_name=filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
 # --- 🧭 TABS ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi", "Simulasi Real-Time"])
+tab1, tab2, tab3, tab4 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi"])
 
 # --- TAB 1 ---
 with tab1:
@@ -74,25 +84,22 @@ with tab1:
     tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown(f"""
-        <div class='metric-card'>
-            <h4>Rata-rata Volume</h4>
-            <p>{df['Total Volume Sampah (m³)'].mean():.2f} m³</p>
-        </div>""", unsafe_allow_html=True)
-    with col2:
-        st.markdown(f"""
-        <div class='metric-card'>
-            <h4>Maksimum Harian</h4>
-            <p>{df['Total Volume Sampah (m³)'].max():.2f} m³</p>
-        </div>""", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Rata-rata Volume", f"{df['Total Volume Sampah (m³)'].mean():.2f} m³")
+    col2.metric("Sampah Maksimum", f"{df['Total Volume Sampah (m³)'].max():.2f} m³")
+    col3.metric("Sampah Minimum", f"{df['Total Volume Sampah (m³)'].min():.2f} m³")
 
     fig = px.line(df, x='Tanggal', y='Total Volume Sampah (m³)', title=f"Volume Sampah Harian Tahun {tahun_pilih}",
                   labels={"Total Volume Sampah (m³)": "Volume (m³)"}, markers=True)
     st.plotly_chart(fig, use_container_width=True)
+
     if show_raw:
-        st.dataframe(data_sampah, use_container_width=True)
+        st.markdown("### 📄 Tabel Data Sampah")
+        gb = GridOptionsBuilder.from_dataframe(data_sampah)
+        gb.configure_pagination()
+        AgGrid(data_sampah, gridOptions=gb.build(), theme='balham')
+        if download_raw:
+            generate_download_link(data_sampah, "data_sampah.xlsx")
 
 # --- TAB 2 ---
 with tab2:
@@ -103,7 +110,12 @@ with tab2:
     fig = px.line(df, x='Tanggal', y=kolom_pilih, title=f"{kolom_pilih} Harian Tahun {tahun_cuaca}", markers=True)
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
-        st.dataframe(data_cuaca, use_container_width=True)
+        st.markdown("### 📄 Tabel Data Cuaca")
+        gb = GridOptionsBuilder.from_dataframe(data_cuaca)
+        gb.configure_pagination()
+        AgGrid(data_cuaca, gridOptions=gb.build(), theme='balham')
+        if download_raw:
+            generate_download_link(data_cuaca, "data_cuaca.xlsx")
 
 # --- TAB 3 ---
 with tab3:
@@ -112,12 +124,16 @@ with tab3:
                   title="Tren Jumlah Penduduk dan PDRB Per Kapita")
     st.plotly_chart(fig, use_container_width=True)
     if show_raw:
-        st.dataframe(data_sosial_ekonomi, use_container_width=True)
+        st.markdown("### 📄 Tabel Data Sosial Ekonomi")
+        gb = GridOptionsBuilder.from_dataframe(data_sosial_ekonomi)
+        gb.configure_pagination()
+        AgGrid(data_sosial_ekonomi, gridOptions=gb.build(), theme='balham')
+        if download_raw:
+            generate_download_link(data_sosial_ekonomi, "data_sosial_ekonomi.xlsx")
 
 # --- TAB 4 ---
 with tab4:
     st.markdown("## Prediksi Jumlah Sampah Harian (Ton) 2025–2030")
-
     col1, col2, col3 = st.columns(3)
     col1.metric("Rata-Rata", f"{data_prediksi['Total Volume Sampah (m³)'].mean():.2f} m³")
     col2.metric("Sampah Maksimum", f"{data_prediksi['Total Volume Sampah (m³)'].max():.2f} m³")
@@ -147,39 +163,14 @@ with tab4:
     fig_tahunan = px.bar(rata_tahunan, x='Tahun', y='Total Volume Sampah (m³)',
                          title="Rata-Rata Prediksi Tahunan", text_auto='.2s')
     st.plotly_chart(fig_tahunan, use_container_width=True)
+
     if show_raw:
-        st.dataframe(data_prediksi, use_container_width=True)
-
-# --- TAB 5: SIMULASI REAL-TIME ---
-with tab5:
-    st.markdown("## 🚀 Simulasi Real-Time Harian")
-    selected_date = st.slider("Pilih Tanggal", 
-                              min_value=data_prediksi['Tanggal'].min().date(), 
-                              max_value=data_prediksi['Tanggal'].max().date(), 
-                              value=data_prediksi['Tanggal'].min().date(),
-                              format="DD MMM YYYY")
-
-    df_today = data_prediksi[data_prediksi['Tanggal'] == pd.to_datetime(selected_date)]
-    if not df_today.empty:
-        vol_today = df_today['Total Volume Sampah (m³)'].values[0]
-        mean_vol = data_prediksi['Total Volume Sampah (m³)'].mean()
-        high_thresh = data_prediksi['Total Volume Sampah (m³)'].quantile(0.95)
-
-        if vol_today < mean_vol:
-            status = "🟢 Normal"
-        elif vol_today < high_thresh:
-            status = "🟡 Waspada"
-        else:
-            status = "🔴 Kritis"
-
-        st.metric("Volume Hari Ini", f"{vol_today:.2f} m³")
-        st.markdown(f"### Status Hari Ini: {status}")
-
-        fig_sim = px.bar(df_today, x='Tanggal', y='Total Volume Sampah (m³)',
-                         title="Simulasi Volume Sampah Harian", color_discrete_sequence=['#00796B'])
-        st.plotly_chart(fig_sim, use_container_width=True)
-    else:
-        st.warning("Data tidak tersedia untuk tanggal ini.")
+        st.markdown("### 📄 Tabel Data Prediksi")
+        gb = GridOptionsBuilder.from_dataframe(data_prediksi)
+        gb.configure_pagination()
+        AgGrid(data_prediksi, gridOptions=gb.build(), theme='balham')
+        if download_raw:
+            generate_download_link(data_prediksi, "prediksi_sampah_2025_2030.xlsx")
 
 # --- 📘 FOOTER ---
 st.markdown("---")

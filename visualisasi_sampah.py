@@ -75,7 +75,7 @@ with tab1:
     tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_sampah['TAHUN'].unique()), key="tahun_sampah")
     df = data_sampah[data_sampah['TAHUN'] == tahun_pilih]
 
-    col1, col2, col3 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown(f"""
         <div class='metric-card'>

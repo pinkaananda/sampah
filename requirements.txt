@@ -8,3 +8,5 @@ streamlit-autorefresh
 matplotlib
 seaborn
 requests
+tensorflow
+scikit-learn

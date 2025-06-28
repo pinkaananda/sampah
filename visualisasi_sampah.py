@@ -67,7 +67,7 @@ data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
 # --- 🧭 TABS ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi", "Simulasi Armada"])
+tab1, tab2, tab3, tab4= st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi"])
 
 # --- TAB 1 ---
 with tab1:
@@ -175,42 +175,6 @@ with tab4:
     st.plotly_chart(fig_tahunan, use_container_width=True)
     if show_raw:
         st.dataframe(data_prediksi, use_container_width=True)
-        
-with tab5:
-    st.subheader("🚛 Simulasi Kebutuhan Armada")
-
-    opsi = st.radio(
-        "Pilih Sumber Volume Sampah:",
-        ["Manual", "Dari Rata-Rata Prediksi Harian", "Total Bulan Tertentu", "Total Tahun Tertentu"]
-    )
-
-    volume = None  # Inisialisasi awal agar tidak error
-
-    if opsi == "Manual":
-        volume = st.slider("Masukkan volume sampah harian (Ton)", 0.0, 500.0, 200.0)
-
-    elif opsi == "Dari Rata-Rata Prediksi Harian":
-        volume = data_prediksi['Total Volume Sampah (m³)'].mean() * 0.25
-        st.info(f"Rata-rata harian dari prediksi: {volume:.2f} Ton")
-
-    elif opsi == "Total Bulan Tertentu":
-        tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_prediksi['Tahun'].unique()), key="tahun_armada")
-        bulan_pilih = st.selectbox("Pilih Bulan", list(range(1, 13)), format_func=lambda x: pd.to_datetime(str(x), format='%m').strftime('%B'))
-        df_bulan = data_prediksi[(data_prediksi['Tahun'] == tahun_pilih) & (data_prediksi['Bulan'] == bulan_pilih)]
-        volume = df_bulan['Total Volume Sampah (m³)'].sum() * 0.25
-        st.info(f"Total sampah bulan {bulan_pilih}/{tahun_pilih}: {volume:.2f} Ton")
-
-    elif opsi == "Total Tahun Tertentu":
-        tahun = st.selectbox("Pilih Tahun", sorted(data_prediksi['Tahun'].unique()), key="tahun_total")
-        df_tahun = data_prediksi[data_prediksi['Tahun'] == tahun]
-        volume = df_tahun['Total Volume Sampah (m³)'].sum() * 0.25
-        st.info(f"Total volume sampah tahun {tahun}: {volume:.2f} Ton")
-
-    if volume is not None:
-        kapasitas_truk = st.number_input("Kapasitas Truk (Ton)", value=5.0)
-        jumlah_truk = int(np.ceil(volume / kapasitas_truk))
-        st.success(f"Dibutuhkan sekitar {jumlah_truk} armada truk untuk mengangkut {volume:.2f} ton sampah.")
-
 # --- 📘 FOOTER ---
 st.markdown("""
     ---

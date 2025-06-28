@@ -177,10 +177,32 @@ with tab4:
         st.dataframe(data_prediksi, use_container_width=True)
         
 with tab5:
-    st.subheader("Simulasi Kebutuhan Armada")
-    volume = st.slider("Masukkan volume sampah harian (Ton)", 0.0, 500.0, 200.0)
+    st.subheader("🚛 Simulasi Kebutuhan Armada")
+
+    opsi = st.radio("Pilih Sumber Volume Sampah:", ["Manual", "Dari Rata-Rata Prediksi Harian", "Total Bulan Tertentu", "Total Tahun Tertentu"])
+
+    if opsi == "Manual":
+        volume = st.slider("Masukkan volume sampah harian (Ton)", 0.0, 500.0, 200.0)
+
+    elif opsi == "Dari Rata-Rata Prediksi Harian":
+        volume = data_prediksi['Total Volume Sampah (m³)'].mean() * 0.25  # Asumsikan konversi 1 m³ = 0.25 Ton
+        st.info(f"Rata-rata harian dari prediksi: {volume:.2f} Ton")
+
+    elif opsi == "Total Bulan Tertentu":
+        tahun_pilih = st.selectbox("Pilih Tahun", sorted(data_prediksi['Tahun'].unique()), key="tahun_armada")
+        bulan_pilih = st.selectbox("Pilih Bulan", list(range(1, 13)), format_func=lambda x: pd.to_datetime(str(x), format='%m').strftime('%B'))
+        df_bulan = data_prediksi[(data_prediksi['Tahun'] == tahun_pilih) & (data_prediksi['Bulan'] == bulan_pilih)]
+        volume = df_bulan['Total Volume Sampah (m³)'].sum() * 0.25
+        st.info(f"Total sampah bulan {bulan_pilih}/{tahun_pilih}: {volume:.2f} Ton")
+
+    elif opsi == "Total Tahun Tertentu":
+        tahun = st.selectbox("Pilih Tahun", sorted(data_prediksi['Tahun'].unique()), key="tahun_total")
+        volume = data_prediksi[data_prediksi['Tahun'] == tahun]['Total Volume Sampah (m³)'].sum() * 0.25
+        st.info(f"Total volume sampah tahun {tahun}: {volume:.2f} Ton")
+
     kapasitas_truk = st.number_input("Kapasitas Truk (Ton)", value=5.0)
     jumlah_truk = int(np.ceil(volume / kapasitas_truk))
+
     st.success(f"Dibutuhkan sekitar {jumlah_truk} armada truk untuk mengangkut {volume:.2f} ton sampah.")
 
 # --- 📘 FOOTER ---

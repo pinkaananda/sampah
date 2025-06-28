@@ -179,11 +179,12 @@ with tab4:
 with tab5:
     st.subheader("🚛 Simulasi Kebutuhan Armada")
 
-    opsi = st.radio("Pilih Sumber Volume Sampah:", 
-                    ["Manual", "Dari Rata-Rata Prediksi Harian", 
-                     "Total Bulan Tertentu", "Total Tahun Tertentu"])
+    opsi = st.radio(
+        "Pilih Sumber Volume Sampah:",
+        ["Manual", "Dari Rata-Rata Prediksi Harian", "Total Bulan Tertentu", "Total Tahun Tertentu"]
+    )
 
-    volume = None  # default None
+    volume = None  # Inisialisasi awal agar tidak error
 
     if opsi == "Manual":
         volume = st.slider("Masukkan volume sampah harian (Ton)", 0.0, 500.0, 200.0)
@@ -201,16 +202,14 @@ with tab5:
 
     elif opsi == "Total Tahun Tertentu":
         tahun = st.selectbox("Pilih Tahun", sorted(data_prediksi['Tahun'].unique()), key="tahun_total")
-        volume = data_prediksi[data_prediksi['Tahun'] == tahun]['Total Volume Sampah (m³)'].sum() * 0.25
+        df_tahun = data_prediksi[data_prediksi['Tahun'] == tahun]
+        volume = df_tahun['Total Volume Sampah (m³)'].sum() * 0.25
         st.info(f"Total volume sampah tahun {tahun}: {volume:.2f} Ton")
 
-    kapasitas_truk = st.number_input("Kapasitas Truk (Ton)", value=5.0)
-
-    if volume is not None and kapasitas_truk > 0:
+    if volume is not None:
+        kapasitas_truk = st.number_input("Kapasitas Truk (Ton)", value=5.0)
         jumlah_truk = int(np.ceil(volume / kapasitas_truk))
         st.success(f"Dibutuhkan sekitar {jumlah_truk} armada truk untuk mengangkut {volume:.2f} ton sampah.")
-    else:
-        st.warning("Silakan pilih opsi dan pastikan input valid sebelum menghitung.")
 
 # --- 📘 FOOTER ---
 st.markdown("""

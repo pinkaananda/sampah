@@ -118,8 +118,8 @@ with tab4:
 with tab5:
     st.subheader("🧠 Prediksi Jumlah Sampah Real Time Berdasarkan Input Pengguna")
     model = load_model('model_lstm.h5')
-    scaler_x = joblib.load('scaler_x.pkl')
-    scaler_y = joblib.load('scaler_y.pkl')
+    scaler_x = joblib.load('scaler_x.save')
+    scaler_y = joblib.load('scaler_y.save')
 
     tanggal = st.date_input("Tanggal Prediksi", value=pd.to_datetime("today"))
     is_holiday = st.checkbox("Hari Libur?")

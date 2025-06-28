@@ -67,7 +67,7 @@ data_sampah['TAHUN'] = data_sampah['Tanggal'].dt.year
 data_cuaca['Tahun'] = data_cuaca['Tanggal'].dt.year
 
 # --- 🧭 TABS ---
-tab1, tab2, tab3, tab4, tabs5 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi", "Simulasi Armada"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Data Sampah", "Data Cuaca", "Sosial Ekonomi", "Hasil Prediksi", "Simulasi Armada"])
 
 # --- TAB 1 ---
 with tab1:

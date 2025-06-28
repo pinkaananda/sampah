@@ -10,4 +10,4 @@ seaborn
 requests
 joblib
 scikit-learn
-tensorflow
+tensorflow==2.11.0

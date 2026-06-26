@@ -146,42 +146,6 @@ Sama seperti data penduduk:
 
 ---
 
-# Struktur Folder
-
-```bash
-project/
-│
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── external/
-│
-├── notebooks/
-│   ├── data_understanding.ipynb
-│   ├── preprocessing.ipynb
-│   ├── feature_engineering.ipynb
-│   ├── modeling.ipynb
-│   └── forecasting_2025_2030.ipynb
-│
-├── models/
-│   ├── saved_model/
-│   └── scaler/
-│
-├── dashboard/
-│   └── streamlit_app.py
-│
-├── results/
-│   ├── evaluation/
-│   ├── prediction/
-│   └── visualization/
-│
-├── requirements.txt
-├── README.md
-└── app.py
-```
-
----
-
 # Tahapan Penelitian
 
 # 1. Data Understanding
